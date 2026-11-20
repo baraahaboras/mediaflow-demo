@@ -2189,9 +2189,9 @@ h3 {
   inset-block-end: 0;
   inset-inline: 0;
   z-index: 1030;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: end;
   padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
   border-block-start: 1px solid var(--mf-rule);
   background-color: var(--mf-surface);
@@ -2220,7 +2220,7 @@ h3 {
 }
 
 .mf-tabbar .mf-tabbar-action {
-  flex: 0 0 56px;
+  justify-self: center;
   inline-size: 56px;
   block-size: 56px;
   margin-block-start: -22px;
@@ -2231,9 +2231,8 @@ h3 {
 
 @media (max-width: 991.98px) {
   .mf-app--side > .mf-main {
-    padding-block-end: 96px;
-  }
-}
+    padding-block-end: calc(96px + env(safe-area-inset-bottom));
+  }}
 
 .mf-greeting {
   margin-block-end: 8px;
@@ -2906,6 +2905,7 @@ p.mf-greeting-title {
 
 /* === Rebuild, step 3: tables (stitch-v2 lists) ================================ */
 .mf-table-wrap {
+  position: relative;
   overflow-x: auto;
   border: 1px solid var(--mf-rule);
   border-radius: 8px;
@@ -3548,4 +3548,24 @@ p.mf-greeting-title {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+/* Phones: the top bar must fit the screen, so the page never grows wider than the bar below it. */
+@media (max-width: 575.98px) {
+  .mf-topbar {
+    gap: 4px;
+  }
+
+  .mf-topbar .mf-brand {
+    display: none;
+  }
+
+  .mf-topbar-actions {
+    gap: 4px;
+    min-inline-size: 0;
+  }
+
+  .mf-topbar .mf-chip {
+    padding-inline: 8px;
+  }
 }
