@@ -1,0 +1,3551 @@
+/*
+ * MediaFlow styles on top of Bootstrap. Values come from tokens.css.
+ * Logical properties only (inline-start, block-end …), so the same rules
+ * serve right-to-left and left-to-right pages. The one approved exception is
+ * the link line, marked below.
+ *
+ * Design phase 1: page shell, masthead, navigation, link line, ink press,
+ * focus mark, and the Bootstrap components re-pointed at the tokens.
+ * Front page, lists, details and forms follow in later phases.
+ */
+
+/* --- Page shell ----------------------------------------------------------- */
+
+body {
+  font-family: var(--mf-font-text);
+  font-size: var(--mf-size-text);
+  line-height: 1.7;
+}
+
+.mf-shell {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: var(--mf-shell-width);
+  margin-inline: auto;
+  padding-inline: var(--mf-gutter);
+}
+
+.mf-main {
+  padding-block: 28px 56px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: var(--mf-font-display);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+a {
+  color: var(--mf-accent);
+}
+
+a:hover {
+  color: var(--mf-accent-hover);
+}
+
+/* Focus mark: a clear ink outline for keyboard users. Never removed. */
+:focus-visible {
+  outline: 2px solid var(--mf-ink);
+  outline-offset: 2px;
+}
+
+/* --- Link line ------------------------------------------------------------ *
+ * A line is drawn under a link, from the start of its text to the end, on
+ * hover and on keyboard focus.
+ *
+ * APPROVED EXCEPTION to "logical properties only": background-position has
+ * no logical form, so the starting side is set per page direction. The line
+ * starts at the left in left-to-right pages and at the right in
+ * right-to-left pages, which is the start of the text in both.
+ */
+.mf-main a:not(.btn):not(.page-link):not(.dropdown-item) {
+  padding-block-end: 2px;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0 2px;
+  text-decoration: none;
+  transition: background-size var(--mf-motion-link) ease-out;
+}
+
+[dir="rtl"] .mf-main a:not(.btn):not(.page-link):not(.dropdown-item) {
+  background-position: right bottom;
+}
+
+.mf-main a:not(.btn):not(.page-link):not(.dropdown-item):hover,
+.mf-main a:not(.btn):not(.page-link):not(.dropdown-item):focus-visible {
+  background-size: 100% 2px;
+}
+
+/* --- Demo banner ---------------------------------------------------------- */
+
+.demo-banner {
+  border-block-end: 1px solid var(--mf-rule);
+  background: var(--mf-placeholder);
+  color: var(--mf-ink);
+  font-size: var(--mf-size-meta);
+  padding: 4px var(--mf-gutter);
+  text-align: center;
+}
+
+/* --- The frame (design version 3) ----------------------------------------- *
+ * Inside a workspace: a sidebar (a drawer below 992px) and a top bar. The page
+ * content sits in .mf-main. Outside a workspace only the top bar is drawn.
+ */
+
+.mf-skip {
+  position: absolute;
+  inset-block-start: -100px;
+  inset-inline-start: 8px;
+  z-index: 2000;
+  padding: 10px 16px;
+  border-radius: var(--mf-radius);
+  background: var(--mf-ink);
+  color: var(--mf-paper);
+}
+
+.mf-skip:focus {
+  inset-block-start: 8px;
+  color: var(--mf-paper);
+  outline-color: var(--mf-paper);
+}
+
+.mf-app {
+  min-block-size: 100vh;
+}
+
+.mf-app--side {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+}
+
+.mf-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-block-size: var(--mf-topbar-height);
+  padding-inline: var(--mf-gutter);
+  border-block-end: 1px solid var(--mf-rule);
+  background-color: var(--mf-paper);
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-meta);
+}
+
+.mf-topbar-date {
+  white-space: nowrap;
+}
+
+.mf-topbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+
+.mf-topbar-actions form {
+  display: contents;
+}
+
+.mf-topbar-org {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--mf-ink);
+}
+
+/* The quiet buttons of the top bar: language, organization, account. */
+.mf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: var(--mf-tap);
+  padding-inline: 12px;
+  border: 1px solid var(--mf-border);
+  border-radius: var(--mf-radius);
+  background-color: transparent;
+  color: var(--mf-ink);
+  font: inherit;
+  font-size: var(--mf-size-meta);
+  text-decoration: none;
+  transition: background-color var(--mf-motion-press) ease-out;
+}
+
+button.mf-chip:hover {
+  background-color: var(--mf-hover-soft);
+}
+
+button.mf-chip:active {
+  background-color: var(--mf-rule);
+}
+
+.mf-chip-text {
+  max-inline-size: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* On small screens the top bar keeps only icons: the names are read out, not drawn. */
+@media (max-width: 575.98px) {
+  .mf-drop-small {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .mf-topbar {
+    gap: 8px;
+  }
+}
+
+.mf-sidebar-title {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.mf-side-org {
+  color: var(--mf-muted);
+  font-size: var(--mf-size-meta);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mf-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--mf-tap);
+  block-size: var(--mf-tap);
+  padding: 0;
+  border: 1px solid var(--mf-border);
+  border-radius: var(--mf-radius);
+  background-color: transparent;
+  color: var(--mf-ink);
+}
+
+.mf-iconbtn:hover {
+  background-color: var(--mf-hover-soft);
+}
+
+.mf-icon {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mf-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--mf-ink);
+  font-family: var(--mf-font-display);
+  font-size: var(--mf-size-brand-compact);
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.mf-brand:hover {
+  color: var(--mf-ink);
+}
+
+/* --- Sidebar --------------------------------------------------------------- */
+
+.mf-sidebar {
+  --bs-offcanvas-width: min(320px, 85vw);
+  --bs-offcanvas-bg: var(--mf-bg-soft);
+  --bs-offcanvas-color: var(--mf-ink);
+  --bs-offcanvas-border-width: 0;
+  --bs-offcanvas-box-shadow: none;
+}
+
+.mf-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  block-size: 100%;
+  padding: 20px 16px;
+  overflow-y: auto;
+  background-color: var(--mf-bg-soft);
+}
+
+.mf-sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-inline: 4px;
+}
+
+.mf-side-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mf-side-nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mf-side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-block-size: var(--mf-tap);
+  padding-inline: 12px;
+  border-inline-start: 3px solid transparent;
+  border-radius: var(--mf-radius);
+  color: var(--mf-ink);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color var(--mf-motion-press) ease-out;
+}
+
+.mf-side-nav a:hover {
+  background-color: var(--mf-sand);
+  color: var(--mf-ink);
+}
+
+.mf-side-nav a[aria-current="page"] {
+  border-inline-start-color: var(--mf-accent);
+  background-color: var(--mf-sand-strong);
+  font-weight: 800;
+}
+
+.mf-side-heading {
+  margin: 20px 0 6px;
+  padding-inline: 16px;
+  color: var(--mf-muted);
+  font-family: var(--mf-font-text);
+  font-size: var(--mf-size-meta);
+  font-weight: 700;
+}
+
+@media (min-width: 992px) {
+  .mf-app--side {
+    grid-template-columns: var(--mf-sidebar-width) minmax(0, 1fr);
+    grid-template-areas:
+      "side top"
+      "side main";
+  }
+
+  .mf-app--side > .mf-topbar {
+    grid-area: top;
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1020;
+  }
+
+  .mf-app--side > .mf-sidebar {
+    grid-area: side;
+    border-inline-end: 1px solid var(--mf-rule);
+    background-color: var(--mf-bg-soft);
+  }
+
+  .mf-app--side > .mf-sidebar .mf-sidebar-inner {
+    position: sticky;
+    inset-block-start: 0;
+    block-size: 100vh;
+  }
+
+  .mf-app--side > .mf-main {
+    grid-area: main;
+  }
+}
+
+/* --- Breadcrumbs ----------------------------------------------------------- */
+
+.mf-crumbs {
+  margin-block-end: 12px;
+  font-size: var(--mf-size-meta);
+}
+
+.mf-crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mf-crumbs li + li::before {
+  content: "/";
+  margin-inline-end: 8px;
+  color: var(--mf-muted);
+}
+
+.mf-crumbs [aria-current="page"] {
+  color: var(--mf-ink);
+  font-weight: 700;
+}
+
+/* --- Buttons: the ink press ----------------------------------------------- *
+ * A button darkens on hover and darkens more when pressed. No shadow, no
+ * growing. The primary button carries the one accent colour.
+ */
+
+.btn {
+  --bs-btn-border-radius: var(--mf-radius);
+  --bs-btn-font-weight: 600;
+  --bs-btn-focus-box-shadow: none;
+  --bs-btn-disabled-opacity: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--mf-tap);
+  transition: background-color var(--mf-motion-press) ease-out;
+}
+
+.btn-primary {
+  --bs-btn-color: var(--mf-on-accent);
+  --bs-btn-bg: var(--mf-accent);
+  --bs-btn-border-color: var(--mf-accent);
+  --bs-btn-hover-color: var(--mf-on-accent);
+  --bs-btn-hover-bg: var(--mf-accent-hover);
+  --bs-btn-hover-border-color: var(--mf-accent-hover);
+  --bs-btn-active-color: var(--mf-on-accent);
+  --bs-btn-active-bg: var(--mf-accent-active);
+  --bs-btn-active-border-color: var(--mf-accent-active);
+}
+
+/* Secondary: transparent with a 1px ink line. */
+.btn-secondary,
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger {
+  --bs-btn-color: var(--mf-ink);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--mf-ink);
+  --bs-btn-hover-color: var(--mf-ink);
+  --bs-btn-hover-bg: var(--mf-hover-soft);
+  --bs-btn-hover-border-color: var(--mf-ink);
+  --bs-btn-active-color: var(--mf-ink);
+  --bs-btn-active-bg: var(--mf-rule);
+  --bs-btn-active-border-color: var(--mf-ink);
+}
+
+/* A destructive action is named by its text; the accent marks it as well. */
+.btn-outline-danger {
+  --bs-btn-color: var(--mf-accent);
+  --bs-btn-border-color: var(--mf-accent);
+  --bs-btn-hover-color: var(--mf-accent-hover);
+  --bs-btn-hover-border-color: var(--mf-accent-hover);
+  --bs-btn-active-color: var(--mf-accent-active);
+  --bs-btn-active-border-color: var(--mf-accent-active);
+}
+
+/* Every disabled button looks the same, whatever its kind. */
+.btn:disabled,
+.btn.disabled {
+  --bs-btn-disabled-color: var(--mf-ink-disabled);
+  --bs-btn-disabled-bg: var(--mf-hover-soft);
+  --bs-btn-disabled-border-color: var(--mf-border);
+}
+
+.btn-link {
+  --bs-btn-color: var(--mf-accent);
+  --bs-btn-hover-color: var(--mf-accent-hover);
+  --bs-btn-active-color: var(--mf-accent-active);
+  --bs-btn-font-weight: 400;
+}
+
+/* --- Fields ---------------------------------------------------------------- *
+ * Design version 3: a full 1px line (3:1 against white), 4px corners, white,
+ * 44px high. The focus mark is an ink outline and is never removed.
+ */
+
+.form-control,
+.form-select {
+  min-block-size: var(--mf-tap);
+  border: 1px solid var(--mf-border);
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-field-bg);
+  color: var(--mf-ink);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--mf-ink);
+  background-color: var(--mf-field-bg);
+  box-shadow: none;
+  outline: 2px solid var(--mf-ink);
+  outline-offset: 2px;
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  border-color: var(--mf-rule);
+  background-color: var(--mf-sand);
+  color: var(--mf-ink-disabled);
+}
+
+/* A field with an error is marked with the accent as well as with words. */
+.mf-q-field:has(.mf-q-error) .form-control,
+.mf-q-field:has(.mf-q-error) .form-select,
+.mf-q-body:has(> .mf-q-error) .form-control {
+  border-color: var(--mf-accent);
+}
+
+.form-check-input {
+  border-color: var(--mf-border);
+  border-radius: var(--mf-radius);
+}
+
+.form-check-input:checked {
+  border-color: var(--mf-ink);
+  background-color: var(--mf-ink);
+}
+
+.form-check-input:focus {
+  border-color: var(--mf-ink);
+  box-shadow: none;
+}
+
+/* --- The sheet ------------------------------------------------------------ *
+ * A white sheet with a fine ink line: the one framed surface of the design.
+ * Used for forms (the assignment sheet), the press card and the state pages.
+ */
+.mf-sheet {
+  --mf-field-bg: var(--mf-surface);
+  box-sizing: border-box;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-sheet--form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  inline-size: 100%;
+  max-inline-size: 820px;
+  margin-inline: auto;
+  padding: 32px;
+}
+
+/* Beside a side column, the sheet keeps to the start of its own column. */
+.mf-sheet--start {
+  margin-inline: 0;
+}
+
+.mf-sheet--narrow {
+  max-inline-size: 620px;
+}
+
+.mf-column-side .mf-sheet--side {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+}
+
+.mf-sheet--side {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-block-start: 16px;
+  padding: 20px;
+}
+
+.mf-sheet-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block-end: 14px;
+  border-block-end: 1px solid var(--mf-rule-strong);
+}
+
+.mf-sheet-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-inline-size: 0;
+}
+
+.mf-sheet-title {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.4;
+}
+
+p.mf-sheet-note {
+  padding-block-start: 10px;
+}
+
+/* A numbered row: the number in the accent, then the question and its fields. */
+.mf-q {
+  display: flex;
+  gap: 16px;
+  padding-block: 18px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-q-number {
+  flex: 0 0 40px;
+  color: var(--mf-accent);
+  font-family: var(--mf-font-display);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.mf-q-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  min-inline-size: 0;
+}
+
+.mf-q-label {
+  font-family: var(--mf-font-display);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.mf-q-hint ul {
+  margin: 0;
+  padding-inline-start: 18px;
+}
+
+/* Two fields under one number: Arabic and English, or start and end. */
+.mf-q-fields--pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.mf-q-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-inline-size: 0;
+}
+
+.mf-q-sublabel {
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-meta);
+}
+
+/* An error is said in words, and marked with the accent as well. */
+.mf-q-error {
+  color: var(--mf-accent);
+  font-size: var(--mf-size-small);
+  font-weight: 600;
+}
+
+.mf-sheet-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-block-start: 8px;
+  padding-block-start: 16px;
+  border-block-start: 1px solid var(--mf-rule-strong);
+}
+
+.mf-sheet--side .mf-q {
+  gap: 10px;
+  padding-block: 12px;
+}
+
+.mf-sheet--side .mf-q-number {
+  flex-basis: 24px;
+  font-size: 20px;
+}
+
+p.mf-facts-note {
+  padding-block-start: 12px;
+}
+
+@media (max-width: 575.98px) {
+  .mf-sheet--form {
+    padding: 20px 16px;
+  }
+
+  .mf-q {
+    gap: 10px;
+  }
+
+  .mf-q-number {
+    flex-basis: 26px;
+    font-size: 22px;
+  }
+
+  .mf-sheet-title {
+    font-size: 24px;
+  }
+}
+
+/* --- Pages before entering (stitch-v2 02 and 03, stitch-v5 login): one card, no picture --- */
+
+.mf-auth-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 16px;
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-meta);
+}
+
+/* The mark of the logo (templates/_mark.html): it takes the colour of its text. */
+.mf-mark {
+  display: inline-block;
+  flex: none;
+  inline-size: auto;
+  block-size: 1.1em;
+  aspect-ratio: 344 / 176;
+  color: var(--mf-accent);
+}
+
+.mf-auth-logo {
+  display: inline-flex;
+  align-items: center;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.mf-auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: 16px 40px;
+  padding-inline: 20px;
+}
+
+.mf-auth-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 480px;
+  padding: 32px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-auth-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mf-auth-brand {
+  display: block;
+  font-family: var(--mf-font-display);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.mf-auth-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mf-auth-fields {
+  display: flex;
+  flex: 1 1 240px;
+  flex-direction: column;
+  gap: 16px;
+  min-inline-size: 0;
+}
+
+.mf-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mf-auth-title {
+  margin: 0;
+  font-size: var(--mf-size-headline);
+  line-height: 1.3;
+}
+
+p.mf-auth-text {
+  margin: 0;
+  color: var(--mf-ink-soft);
+}
+
+.mf-auth-step {
+  align-self: flex-start;
+}
+
+.mf-auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mf-auth-who {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--mf-rule);
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-paper);
+}
+
+.mf-auth-who input {
+  flex: 1;
+  min-inline-size: 0;
+  border: 0;
+  background: transparent;
+  color: var(--mf-ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+.mf-btn-block {
+  inline-size: 100%;
+}
+
+.mf-auth-link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-block-size: var(--mf-tap);
+  font-size: var(--mf-size-small);
+  font-weight: 600;
+}
+
+.mf-auth-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block-start: 14px;
+  border-block-start: var(--mf-rule-light);
+}
+
+.mf-auth-foot:empty,
+.mf-auth-foot:has(.mf-meta:empty) {
+  display: none;
+}
+
+p.mf-auth-motto {
+  max-inline-size: 420px;
+  margin-block: 28px 0;
+  font-family: var(--mf-font-display);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.7;
+  text-align: center;
+}
+
+@media (max-width: 575.98px) {
+  .mf-auth-card {
+    padding: 24px 20px;
+  }
+
+  .mf-auth-title {
+    font-size: 24px;
+  }
+}
+
+/* --- State pages: the empty page and the correction ----------------------- */
+
+.mf-state-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  overflow: hidden;
+  inline-size: 100%;
+  max-inline-size: 560px;
+  padding: 28px;
+}
+
+/* The icon of a state, in a sand square. */
+.mf-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 8px;
+  background-color: var(--mf-sand);
+  color: var(--mf-accent);
+}
+
+.mf-state-icon .mf-icon {
+  inline-size: 28px;
+  block-size: 28px;
+}
+
+/* A large number behind the words of a 404. Decorative. */
+.mf-state-watermark {
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-end: 20px;
+  color: var(--mf-sand-strong);
+  font-family: var(--mf-font-display);
+  font-size: 120px;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.mf-state-page > :not(.mf-state-watermark) {
+  position: relative;
+}
+
+/* Inside a list the empty page keeps a little air above it. */
+.mf-index + .mf-state-page,
+.mf-toolbar ~ div > .mf-state-page,
+.mf-filter-row ~ div > .mf-state-page {
+  margin-block-start: 24px;
+}
+
+.mf-state-title {
+  margin: 0;
+  font-family: var(--mf-font-display);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+/* The ruled lines of a column nobody has written in yet. Decorative. */
+.mf-ruled-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  inline-size: 100%;
+}
+
+.mf-ruled-line {
+  block-size: 1px;
+  background-color: var(--mf-rule);
+}
+
+p.mf-state-text {
+  margin: 0;
+}
+
+.mf-state-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--mf-tap);
+  font-weight: 600;
+}
+
+@media (max-width: 575.98px) {
+  .mf-state-page {
+    padding: 20px 16px;
+  }
+
+  .mf-state-title {
+    font-size: 20px;
+  }
+}
+
+/* --- Menus ---------------------------------------------------------------- */
+
+.dropdown-menu {
+  --bs-dropdown-bg: var(--mf-paper);
+  --bs-dropdown-color: var(--mf-ink);
+  --bs-dropdown-border-color: var(--mf-ink);
+  --bs-dropdown-border-radius: 0;
+  --bs-dropdown-box-shadow: none;
+  --bs-dropdown-link-color: var(--mf-ink);
+  --bs-dropdown-link-hover-color: var(--mf-ink);
+  --bs-dropdown-link-hover-bg: var(--mf-hover-soft);
+  --bs-dropdown-link-active-color: var(--mf-paper);
+  --bs-dropdown-link-active-bg: var(--mf-ink);
+  --bs-dropdown-header-color: var(--mf-ink-soft);
+  --bs-dropdown-divider-bg: var(--mf-rule);
+  box-shadow: none;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--mf-tap);
+}
+
+/* --- Other Bootstrap components ------------------------------------------- */
+
+/* Cards: separated by a rule and space, never a full frame or a shadow. */
+.card {
+  --bs-card-bg: transparent;
+  --bs-card-border-width: 0;
+  --bs-card-border-radius: 0;
+  --bs-card-inner-border-radius: 0;
+  --bs-card-spacer-x: 0;
+  --bs-card-spacer-y: 14px;
+  border-block-start: 1px solid var(--mf-ink);
+  box-shadow: none;
+}
+
+/* Status labels: said in words first. The filled form marks the positive state. */
+.badge {
+  --bs-badge-border-radius: 0;
+  --bs-badge-font-weight: 500;
+  border: 1px solid var(--mf-ink-soft);
+  background-color: transparent !important;
+  color: var(--mf-ink) !important;
+}
+
+.badge.text-bg-success {
+  border-color: var(--mf-ink);
+  background-color: var(--mf-ink) !important;
+  color: var(--mf-paper) !important;
+}
+
+/* Messages (design version 3): a white card, 1px line, a 4px edge that says the kind. */
+.alert {
+  --bs-alert-bg: var(--mf-surface);
+  --bs-alert-color: var(--mf-ink);
+  --bs-alert-border-color: var(--mf-rule);
+  --bs-alert-border-radius: 8px;
+  --bs-alert-link-color: var(--mf-accent);
+  border: 1px solid var(--mf-rule);
+  border-inline-start: 4px solid var(--mf-ink);
+  border-radius: 8px;
+}
+
+.alert-success {
+  border-inline-start-color: var(--mf-ok);
+}
+
+/* Something is wrong, or needs the reader to act. */
+.alert-danger,
+.alert-warning {
+  border-inline-start-color: var(--mf-accent);
+  background-color: var(--mf-accent-tint);
+}
+
+.text-danger {
+  color: var(--mf-accent) !important;
+}
+
+/* Pagination */
+.pagination {
+  --bs-pagination-bg: transparent;
+  --bs-pagination-color: var(--mf-ink);
+  --bs-pagination-border-color: var(--mf-ink);
+  --bs-pagination-border-radius: var(--mf-radius);
+  --bs-pagination-hover-color: var(--mf-ink);
+  --bs-pagination-hover-bg: var(--mf-hover-soft);
+  --bs-pagination-hover-border-color: var(--mf-ink);
+  --bs-pagination-focus-box-shadow: none;
+  --bs-pagination-disabled-bg: transparent;
+  --bs-pagination-disabled-color: var(--mf-ink-disabled);
+  --bs-pagination-disabled-border-color: var(--mf-border);
+}
+
+.page-link {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--mf-tap);
+}
+
+/* --- Front page ----------------------------------------------------------- *
+ * Built from what exists: activities, numbers and projects. Sections are
+ * separated by rules and space, never by framed boxes.
+ */
+
+.mf-front {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mf-section-gap);
+}
+
+.mf-columns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--mf-section-gap);
+}
+
+.mf-column-main {
+  flex: 999 1 520px;
+  min-inline-size: 0;
+}
+
+.mf-column-side {
+  flex: 1 1 300px;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: 20px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-head-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* A section heading sitting on a heavy rule. */
+.mf-section-title {
+  margin: 0;
+  padding-block-end: 10px;
+  border-block-end: 1px solid var(--mf-rule-strong);
+  font-size: var(--mf-size-section);
+  line-height: 1.4;
+}
+
+.mf-meta {
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-small);
+  line-height: 1.6;
+}
+
+p.mf-meta {
+  margin: 0;
+}
+
+.mf-empty-line {
+  margin: 0;
+  padding-block: 16px;
+  border-block-end: var(--mf-rule-light);
+  color: var(--mf-ink-soft);
+}
+
+/* An entry with its date set large beside it. */
+.mf-entry {
+  display: flex;
+  gap: 20px;
+  padding-block: 20px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-index > .mf-entry {
+  padding-inline: 20px;
+}
+
+.mf-entry-date {
+  display: flex;
+  flex: 0 0 72px;
+  flex-direction: column;
+}
+
+.mf-entry-day {
+  font-family: var(--mf-font-display);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.mf-entry-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-inline-size: 0;
+}
+
+.mf-entry-title {
+  margin: 0;
+  font-size: var(--mf-size-card-title);
+  line-height: 1.6;
+}
+
+.mf-entry-title a,
+.mf-card-title a,
+.mf-desk-title {
+  color: var(--mf-ink);
+}
+
+/* A state is said in words; ink, not the accent, unless it asks for action. */
+.mf-state {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-block-size: 24px;
+  padding: 2px 8px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-sand);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* A numbered list: the number in the accent, the title a link. */
+.mf-desk-item {
+  display: flex;
+  gap: 14px;
+  padding-block: 16px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-desk-number {
+  color: var(--mf-accent);
+  font-family: var(--mf-font-display);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.mf-desk-title {
+  align-self: flex-start;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* The numbers strip: a heavy rule above, a fine rule below. */
+.mf-numbers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.mf-number {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 20px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-number-value {
+  font-family: var(--mf-font-display);
+  font-size: var(--mf-size-number);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.mf-number-label {
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-small);
+}
+
+.mf-block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mf-block-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mf-block-title {
+  margin: 0;
+  font-size: var(--mf-size-section);
+  line-height: 1.4;
+}
+
+/* Project cards: a fine ink rule on top, no frame. */
+.mf-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.mf-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-kicker {
+  color: var(--mf-accent);
+  font-size: var(--mf-size-meta);
+  font-weight: 600;
+}
+
+.mf-card-title {
+  margin: 0;
+  font-size: var(--mf-size-card-title);
+  line-height: 1.6;
+}
+
+/* --- Page head (list, detail) --------------------------------------------- */
+
+.mf-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.mf-page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mf-page-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-inline-size: 0;
+}
+
+/* The small accent label above a title. */
+.mf-kicker--display {
+  font-family: var(--mf-font-display);
+  font-weight: 800;
+}
+
+.mf-page-title {
+  margin: 0;
+  font-size: 36px;
+  line-height: 1.4;
+}
+
+.mf-btn-lg {
+  min-block-size: 48px;
+  padding-inline: 22px;
+}
+
+.mf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* --- Detail pattern ------------------------------------------------------- */
+
+.mf-detail-head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* The way back to the section, above the headline. */
+.mf-section-link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-block-size: var(--mf-tap);
+}
+
+.mf-headline {
+  margin: 0;
+  font-size: var(--mf-size-headline);
+  line-height: 1.45;
+}
+
+/* The opening paragraph. */
+.mf-lead {
+  max-inline-size: 760px;
+  margin-block-start: 4px;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.mf-detail-head .mf-actions {
+  padding-block-start: 8px;
+}
+
+.mf-columns--wide {
+  gap: 40px;
+}
+
+.mf-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-block: 14px;
+  border-block-end: var(--mf-rule-light);
+}
+
+/* The facts card beside the main column. */
+.mf-facts {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.mf-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 14px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-facts dt {
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-small);
+  font-weight: 400;
+}
+
+.mf-facts dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: end;
+}
+
+/* --- List pattern: an index, as in a newspaper ---------------------------- */
+
+/* Search and filters sit on a heavy rule. */
+.mf-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-search {
+  display: flex;
+  flex: 1 1 320px;
+  flex-direction: column;
+  gap: 6px;
+  max-inline-size: 640px;
+}
+
+.mf-label {
+  font-size: var(--mf-size-small);
+  font-weight: 500;
+}
+
+.mf-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mf-search-row .form-control {
+  flex: 2 1 180px;
+  min-inline-size: 0;
+}
+
+.mf-search-row .form-select {
+  flex: 1 1 150px;
+  min-inline-size: 0;
+}
+
+/* Filter tabs: the chosen one in ink. */
+.mf-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-family: var(--mf-font-display);
+  font-size: var(--mf-size-small);
+  font-weight: 500;
+}
+
+.mf-main .mf-tabs a:not(.btn):not(.page-link):not(.dropdown-item) {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--mf-tap);
+  padding-block-end: 0;
+  padding-inline: 14px;
+  border-radius: var(--mf-radius);
+  background-image: none;
+  color: var(--mf-ink);
+  transition: background-color var(--mf-motion-press) ease-out;
+}
+
+.mf-main .mf-tabs a:not(.btn):not(.page-link):not(.dropdown-item):hover {
+  background-color: var(--mf-hover-soft);
+}
+
+.mf-main .mf-tabs a[aria-current="true"]:not(.btn):not(.page-link):not(.dropdown-item) {
+  background-color: var(--mf-ink);
+  color: var(--mf-paper);
+}
+
+.mf-index {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-index-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-index > :last-child {
+  border-block-end: 0;
+}
+
+.mf-index-main {
+  display: flex;
+  flex: 999 1 420px;
+  flex-direction: column;
+  gap: 6px;
+  min-inline-size: 0;
+}
+
+.mf-index-title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.mf-index-title a {
+  color: var(--mf-ink);
+}
+
+.mf-index-summary {
+  max-inline-size: 640px;
+  margin: 0;
+}
+
+.mf-index-side {
+  display: flex;
+  flex: 1 1 140px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mf-index-number {
+  font-family: var(--mf-font-display);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.mf-index-side .mf-state {
+  padding-block-start: 6px;
+}
+
+.mf-index-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-block-start: 6px;
+}
+
+/* A list with no toolbar above it needs nothing more (kept for the templates that name it). */
+.mf-index--ruled {
+  margin-block-start: 0;
+}
+
+.mf-index-title--small {
+  font-family: var(--mf-font-text);
+  font-size: var(--mf-size-text);
+  font-weight: 600;
+}
+
+.mf-inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mf-select-compact {
+  inline-size: auto;
+  min-inline-size: 140px;
+}
+
+.mf-side-form {
+  padding-block-start: 16px;
+}
+
+/* Paging: where we are, in words, then the two steps. */
+.mf-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-block-start: 32px;
+}
+
+.mf-pager-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Loading lines: shown only while a list is really being fetched. */
+.mf-loading {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  max-inline-size: 520px;
+  padding-block: 20px;
+}
+
+.mf-loading.htmx-request {
+  display: flex;
+}
+
+.mf-loading.htmx-request + * {
+  display: none;
+}
+
+.mf-skeleton-line {
+  border-radius: var(--mf-radius);
+  block-size: 12px;
+  background-color: var(--mf-skeleton);
+  animation: mf-pulse 900ms ease-in-out infinite alternate;
+}
+
+.mf-skeleton-line--title {
+  inline-size: 80%;
+  block-size: 26px;
+  background-color: var(--mf-rule);
+}
+
+.mf-skeleton-line--short {
+  inline-size: 45%;
+}
+
+@keyframes mf-pulse {
+  from {
+    opacity: 0.45;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- Small pieces --------------------------------------------------------- */
+
+/* Links inside running text always carry a thin line, so they are not told
+   apart by colour alone. The link line is drawn over it on hover. */
+.mf-main p a:not(.btn):not(.page-link):not(.dropdown-item),
+.mf-main .alert a:not(.btn):not(.page-link):not(.dropdown-item),
+.mf-main .text-lines a:not(.btn):not(.page-link):not(.dropdown-item) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+/* "Arabic only" / "English only": a quiet note beside text shown in its
+   other language. Not a status. */
+.mf-lang-label {
+  display: inline-block;
+  padding-inline: 6px;
+  border: 1px solid var(--mf-rule-strong);
+  color: var(--mf-ink-soft);
+  font-family: var(--mf-font-text);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.6;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Multi-line user text: keep the line breaks the writer typed. */
+.text-lines {
+  white-space: pre-line;
+}
+
+.invite-link {
+  word-break: break-all;
+}
+
+/* --- Photo upload ----------------------------------------------------------- *
+ * A dashed zone with four crop marks in the accent (on hover, focus and drag), and
+ * a film strip: each photo is faint and clears as its upload progresses.
+ */
+.mf-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-block-start: 28px;
+  padding: 20px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-sheet-after {
+  max-inline-size: 820px;
+  margin-inline: auto;
+}
+
+.mf-upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.mf-upload-zone {
+  --mark: var(--mf-accent);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 120px;
+  justify-content: center;
+  padding: 20px;
+  border: 2px dashed var(--mf-rule-strong);
+  border-radius: 8px;
+  background-color: var(--mf-paper);
+  cursor: pointer;
+}
+
+.mf-upload-zone::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms;
+  background:
+    linear-gradient(var(--mark), var(--mark)) top left / 16px 2px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top left / 2px 16px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top right / 16px 2px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top right / 2px 16px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom left / 16px 2px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom left / 2px 16px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom right / 16px 2px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom right / 2px 16px no-repeat;
+}
+
+.mf-upload-zone:hover::after,
+.mf-upload-zone:focus-within::after {
+  opacity: 1;
+}
+
+.mf-upload-zone:focus-within {
+  outline: 2px solid var(--mf-ink);
+  outline-offset: 2px;
+}
+
+/* The real file field covers the zone: a click opens the picker and a drop lands on it. */
+.mf-upload-input {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.mf-upload-title {
+  font-weight: 800;
+}
+
+.mf-upload-hint {
+  color: var(--mf-ink-soft);
+  font-size: 14px;
+}
+
+.mf-upload-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mf-upload--js [data-submit] {
+  display: none;
+}
+
+.mf-upload-status {
+  min-block-size: 1.7em;
+  margin: 0;
+  font-size: 15px;
+}
+
+.mf-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 10px;
+  border-radius: 8px;
+  list-style: none;
+  background-color: var(--mf-ink);
+}
+
+.mf-strip[hidden] {
+  display: none;
+}
+
+.mf-slot {
+  --p: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  inline-size: 96px;
+  color: var(--mf-surface);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.mf-slot img {
+  display: block;
+  inline-size: 96px;
+  block-size: 96px;
+  border-radius: var(--mf-radius);
+  object-fit: cover;
+  background-color: var(--mf-placeholder);
+  opacity: calc(0.25 + 0.75 * var(--p));
+}
+
+.mf-slot[data-state="failed"] img {
+  opacity: 0.35;
+}
+
+.mf-slot[data-state="failed"] .mf-slot-note {
+  color: var(--mf-surface);
+  font-weight: 800;
+}
+
+.mf-slot .btn {
+  --bs-btn-color: var(--mf-surface);
+  --bs-btn-border-color: var(--mf-surface);
+  --bs-btn-hover-bg: var(--mf-surface);
+  --bs-btn-hover-color: var(--mf-ink);
+  --bs-btn-padding-x: 4px;
+}
+
+/* --- Figures, tags, photo grid (design version 3, media library) ----------- *
+ * Cards are white with a 1px sand line and 8px corners; a status is always a word,
+ * the colour only helps.
+ */
+.mf-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.mf-kpi {
+  padding: 16px 20px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-kpi dt {
+  color: var(--mf-muted);
+  font-size: var(--mf-size-meta);
+  font-weight: 500;
+}
+
+.mf-kpi dd {
+  margin: 4px 0 0;
+}
+
+.mf-kpi-number {
+  font-family: var(--mf-font-display);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.mf-kpi-unit {
+  color: var(--mf-muted);
+  font-size: var(--mf-size-small);
+}
+
+.mf-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 24px;
+  padding: 2px 8px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-sand);
+  color: var(--mf-ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.mf-tag::before {
+  content: "";
+  flex: none;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.mf-tag--draft {
+  background-color: var(--mf-sand-strong);
+}
+
+.mf-tag--review {
+  border: 1px solid var(--mf-rule-strong);
+  background-color: var(--mf-surface);
+}
+
+.mf-tag--changes,
+.mf-tag--attention {
+  background-color: var(--mf-accent-tint);
+  color: var(--mf-accent-hover);
+}
+
+.mf-tag--alert {
+  border: 1px solid var(--mf-accent-hover);
+  background-color: var(--mf-accent-tint);
+  color: var(--mf-accent-hover);
+  font-weight: 800;
+}
+
+.mf-tag--approved {
+  background-color: var(--mf-ok-tint);
+  color: var(--mf-ok);
+}
+
+.mf-tag--archived,
+.mf-tag--quiet {
+  color: var(--mf-muted);
+}
+
+.mf-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mf-photo {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-photo-frame {
+  display: block;
+  aspect-ratio: 4 / 3;
+  background-color: var(--mf-placeholder);
+}
+
+.mf-photo-frame img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.mf-photo-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  color: var(--mf-muted);
+  font-size: var(--mf-size-meta);
+}
+
+.mf-photo-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px 14px;
+}
+
+.mf-photo-title {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.mf-photo-meta {
+  margin: 0;
+}
+
+.mf-photo-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mf-photo-note {
+  margin: 0;
+  color: var(--mf-accent-hover);
+  font-size: var(--mf-size-meta);
+  font-weight: 800;
+}
+
+.mf-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.mf-figure img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  max-block-size: 75vh;
+  border-radius: 8px;
+  background-color: var(--mf-placeholder);
+  object-fit: contain;
+}
+
+.mf-figure-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  background-color: var(--mf-placeholder);
+  color: var(--mf-muted);
+}
+
+.mf-figure figcaption {
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-small);
+}
+
+.mf-captions p {
+  margin: 0 0 8px;
+}
+
+.mf-activity-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-block-end: 28px;
+}
+
+.mf-activity-photos-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.mf-subsection-title {
+  margin: 0;
+  font-size: var(--mf-size-section);
+}
+
+@media (max-width: 575.98px) {
+  .mf-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .mf-kpi-number {
+    font-size: 26px;
+  }
+
+  .mf-photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .mf-toolbar {
+    padding: 12px;
+  }
+
+  .mf-index-item {
+    padding: 14px;
+  }
+}
+
+/* --- Confirmation dialog (design version 3) ---------------------------------- */
+.modal {
+  --bs-modal-bg: var(--mf-surface);
+  --bs-modal-color: var(--mf-ink);
+  --bs-modal-border-color: var(--mf-rule);
+  --bs-modal-border-radius: 8px;
+  --bs-modal-inner-border-radius: 8px;
+  --bs-modal-box-shadow: none;
+  --bs-modal-header-border-color: var(--mf-rule);
+  --bs-modal-footer-border-color: var(--mf-rule);
+}
+
+.modal-backdrop {
+  --bs-backdrop-bg: var(--mf-ink);
+  --bs-backdrop-opacity: 0.45;
+}
+
+.modal-title {
+  font-size: var(--mf-size-section);
+}
+
+/* Playfair's digits are old-style by default (a 0 looks like an O): numbers use lining digits. */
+.mf-kpi-number,
+.mf-index-number,
+.mf-entry-day,
+.mf-q-number,
+h1,
+h2,
+h3 {
+  font-variant-numeric: lining-nums;
+}
+
+.mf-consent-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-block: 28px;
+}
+
+.mf-consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.mf-history {
+  margin: 0;
+  padding-inline-start: 20px;
+}
+
+/* --- Tab counts, photo corner tag, bottom tab bar (stitch-v3) -------------------- */
+.mf-tab-count {
+  margin-inline-start: 8px;
+  padding: 1px 8px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-sand);
+  color: var(--mf-ink);
+  font-family: var(--mf-font-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mf-main .mf-tabs a[aria-current="true"]:not(.btn):not(.page-link):not(.dropdown-item) .mf-tab-count {
+  background-color: var(--mf-surface);
+}
+
+.mf-photo-media {
+  position: relative;
+}
+
+.mf-photo-corner {
+  position: absolute;
+  inset-block-end: 8px;
+  inset-inline-start: 8px;
+}
+
+.mf-tabbar {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: 1030;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  border-block-start: 1px solid var(--mf-rule);
+  background-color: var(--mf-surface);
+}
+
+.mf-tabbar a,
+.mf-tabbar button {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-block-size: var(--mf-tap);
+  padding: 4px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--mf-ink);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.mf-tabbar [aria-current="page"] {
+  color: var(--mf-accent);
+  font-weight: 800;
+}
+
+.mf-tabbar .mf-tabbar-action {
+  flex: 0 0 56px;
+  inline-size: 56px;
+  block-size: 56px;
+  margin-block-start: -22px;
+  border-radius: 8px;
+  background-color: var(--mf-accent);
+  color: var(--mf-on-accent);
+}
+
+@media (max-width: 991.98px) {
+  .mf-app--side > .mf-main {
+    padding-block-end: 96px;
+  }
+}
+
+.mf-greeting {
+  margin-block-end: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-greeting-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+
+p.mf-greeting-title {
+  margin: 0;
+  font-family: var(--mf-font-display);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.mf-greeting-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 575.98px) {
+  .mf-greeting {
+    padding: 16px;
+  }
+
+  .mf-greeting-actions .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* A section of a sheet: a number and a name, then its rows (stitch-v3). */
+.mf-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-start: 22px;
+  padding-block: 10px;
+  border-block-end: 1px solid var(--mf-rule-strong);
+}
+
+.mf-section-head:first-of-type {
+  margin-block-start: 6px;
+}
+
+.mf-section-no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 32px;
+  block-size: 24px;
+  padding-inline: 6px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-sand-strong);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+h2.mf-section-name {
+  margin: 0;
+  font-size: var(--mf-size-card-title);
+}
+
+/* --- Motion --------------------------------------------------------------- *
+ * Every movement stops for people who ask their system for less motion.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .mf-main a,
+  .mf-side-nav a,
+  .mf-iconbtn,
+  .mf-chip,
+  .btn {
+    transition: none;
+  }
+
+  .mf-skeleton-line {
+    animation: none;
+  }
+
+  .mf-upload-zone::after {
+    transition: none;
+  }
+}
+
+/* --- Content: the item page, margin notes, stamps (stage C4) ------------------------ */
+.mf-tag--published {
+  border: 1px solid var(--mf-ok);
+  background-color: var(--mf-ok-tint);
+  color: var(--mf-ok);
+  font-weight: 800;
+}
+
+.mf-text {
+  margin-block-end: 28px;
+  padding-block-end: 20px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-text-title {
+  margin: 8px 0 12px;
+  font-family: var(--mf-font-display);
+  font-size: var(--mf-size-section);
+}
+
+.mf-text-summary {
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-text);
+  font-weight: 600;
+}
+
+.mf-margin-notes {
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.mf-margin-note {
+  margin-block-end: 12px;
+  padding: 10px 14px;
+  border-inline-start: 3px solid var(--mf-accent);
+  background-color: var(--mf-accent-tint);
+}
+
+.mf-margin-note p {
+  margin: 0 0 4px;
+}
+
+.mf-why {
+  margin-block-start: 8px;
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-small);
+}
+
+.mf-why ul {
+  margin: 4px 0 0;
+  padding-inline-start: 20px;
+}
+
+.mf-stamp {
+  display: inline-block;
+  margin-block-end: 16px;
+  padding: 6px 18px;
+  border: 3px solid currentColor;
+  border-radius: var(--mf-radius);
+  font-family: var(--mf-font-display);
+  font-size: var(--mf-size-section);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  rotate: -3deg;
+  animation: mf-stamp-land 420ms cubic-bezier(0.2, 0.9, 0.3, 1) 1 both;
+}
+
+.mf-stamp--sent {
+  color: var(--mf-ink-soft);
+}
+
+.mf-stamp--approved {
+  color: var(--mf-ok);
+}
+
+.mf-stamp--excluded {
+  color: var(--mf-ink);
+}
+
+.mf-stamp--changes {
+  color: var(--mf-accent-hover);
+}
+
+@keyframes mf-stamp-land {
+  from {
+    opacity: 0;
+    scale: 1.6;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mf-stamp {
+    animation: none;
+  }
+}
+
+.mf-remove-list {
+  list-style: none;
+}
+
+.mf-remove-list li {
+  margin-block: 6px;
+}
+
+.mf-path {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.mf-path li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--mf-rule);
+  border-radius: var(--mf-radius);
+  color: var(--mf-muted);
+  font-size: var(--mf-size-small);
+}
+
+.mf-path li[aria-current="step"] {
+  border-color: var(--mf-ink);
+  background-color: var(--mf-surface);
+  color: var(--mf-ink);
+  font-weight: 800;
+}
+
+.mf-path-no {
+  font-family: var(--mf-font-display);
+}
+
+.mf-decision {
+  margin-block-end: 24px;
+}
+
+.mf-decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mf-checks {
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.mf-checks li {
+  display: flex;
+  gap: 8px;
+  padding-block: 8px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-check-ok .mf-check-mark {
+  color: var(--mf-ok);
+}
+
+.mf-check-no .mf-check-mark {
+  color: var(--mf-accent-hover);
+}
+
+/* --- Shapes from stitch-v4: account tabs, notes, choice cards, banners ------------- */
+.mf-account-tabs {
+  box-sizing: border-box;
+  max-inline-size: 620px;
+  margin-block-end: 20px;
+  margin-inline: auto;
+}
+
+.mf-note {
+  padding: 12px 16px;
+  border-inline-start: 3px solid var(--mf-rule-strong);
+  background-color: var(--mf-sand);
+  font-size: var(--mf-size-small);
+}
+
+.mf-choice-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+div.mf-choice-cards > div {
+  padding: 14px 16px;
+  border: 1px solid var(--mf-rule);
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-surface);
+}
+
+div.mf-choice-cards > div:has(input:checked) {
+  border-color: var(--mf-ink);
+  font-weight: 800;
+}
+
+div.mf-choice-cards label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.mf-invite-card,
+.mf-datecards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 0 0 20px;
+}
+
+.mf-invite-card > div,
+.mf-datecards > div {
+  padding: 12px 16px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-invite-card dt,
+.mf-datecards dt {
+  color: var(--mf-muted);
+  font-size: var(--mf-size-meta);
+  font-weight: 400;
+}
+
+.mf-invite-card dd,
+.mf-datecards dd {
+  margin: 0;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.mf-status-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 16px;
+  margin-block-end: 16px;
+  padding: 14px 20px;
+  border: 1px solid var(--mf-rule);
+  border-inline-start-width: 4px;
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+}
+
+.mf-status-banner--valid {
+  border-inline-start-color: var(--mf-ok);
+}
+
+.mf-status-banner--expiring_soon,
+.mf-status-banner--expired,
+.mf-status-banner--withdrawn {
+  border-inline-start-color: var(--mf-accent-hover);
+  background-color: var(--mf-accent-tint);
+}
+
+/* === Rebuild, step 1: the frame (stitch-v2 / v3) ============================== *
+ * Scale: text 15px, small and labels 13px, page title 28px, section titles 18px, big
+ * numbers 32px (tokens.css). Cards are white with a light line and a very soft shadow.
+ */
+.mf-topbar {
+  gap: 16px;
+  min-block-size: 64px;
+  background-color: var(--mf-surface);
+}
+
+.mf-topbar-trail {
+  min-inline-size: 0;
+  margin-inline-end: auto;
+}
+
+.mf-topbar-trail .mf-crumbs {
+  margin: 0;
+}
+
+.mf-topbar-actions {
+  flex-wrap: nowrap;
+  margin-inline-start: auto;
+}
+
+.mf-topbar-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  inline-size: 280px;
+  min-block-size: var(--mf-tap);
+  padding-inline: 12px;
+  border: 1px solid var(--mf-rule);
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-paper);
+  color: var(--mf-muted);
+}
+
+.mf-topbar-search:focus-within {
+  border-color: var(--mf-ink);
+}
+
+.mf-topbar-input {
+  flex: 1;
+  min-inline-size: 0;
+  border: 0;
+  background: transparent;
+  color: var(--mf-ink);
+  font: inherit;
+  font-size: var(--mf-size-small);
+}
+
+.mf-bell {
+  position: relative;
+}
+
+.mf-bell-count {
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-end: 2px;
+  min-inline-size: 18px;
+  padding-inline: 4px;
+  border-radius: 9px;
+  background-color: var(--mf-accent);
+  color: var(--mf-on-accent);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+}
+
+.mf-avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  background-color: var(--mf-accent);
+  color: var(--mf-on-accent);
+  font-family: var(--mf-font-text);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.mf-avatar--soft {
+  background-color: var(--mf-accent-tint);
+  color: var(--mf-accent-hover);
+}
+
+.mf-avatar--lg {
+  inline-size: 40px;
+  block-size: 40px;
+  font-size: 14px;
+}
+
+.mf-chip {
+  min-block-size: var(--mf-tap);
+  border-color: var(--mf-rule);
+  background-color: var(--mf-surface);
+  font-size: var(--mf-size-small);
+}
+
+.mf-crumbs ol {
+  margin: 0;
+  font-size: var(--mf-size-small);
+}
+
+.mf-sidebar-inner {
+  background-color: var(--mf-bg-soft);
+}
+
+.mf-side-nav a {
+  gap: 12px;
+  min-block-size: 42px;
+  font-size: 15px;
+}
+
+.mf-side-nav a .mf-icon {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+.mf-side-nav a[aria-current="page"] {
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+  color: var(--mf-accent-hover);
+}
+
+.mf-side-action {
+  min-block-size: 44px;
+  box-shadow: var(--mf-shadow-card);
+  font-size: 15px;
+}
+
+.mf-brand {
+  letter-spacing: 0;
+}
+
+.mf-column-side,
+.mf-kpi,
+.mf-index,
+.mf-toolbar,
+.mf-sheet,
+.mf-photo {
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-page-title,
+.mf-headline {
+  font-size: var(--mf-size-headline);
+}
+
+.mf-section-title {
+  font-size: var(--mf-size-section);
+}
+
+.mf-kpi-number {
+  font-size: var(--mf-size-number);
+}
+
+.btn {
+  font-size: var(--mf-size-text);
+}
+
+.btn-sm {
+  font-size: var(--mf-size-small);
+}
+
+@media (max-width: 575.98px) {
+  .mf-topbar-actions {
+    gap: 4px;
+  }
+}
+
+/* === Rebuild, step 2: figures with icons, the front page ======================= */
+.mf-kpis {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.mf-kpi {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px 18px;
+  border-block-start: 3px solid var(--mf-accent);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-kpi--2 {
+  border-block-start-color: var(--mf-ok);
+}
+
+.mf-kpi--3 {
+  border-block-start-color: var(--mf-ink);
+}
+
+.mf-kpi--4 {
+  border-block-start-color: var(--mf-rule-strong);
+}
+
+.mf-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mf-kpi-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 36px;
+  block-size: 36px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-sand);
+  color: var(--mf-ink-soft);
+}
+
+.mf-kpi-hint {
+  color: var(--mf-muted);
+  font-size: var(--mf-size-meta);
+}
+
+.mf-greeting {
+  flex-wrap: nowrap;
+  gap: 16px;
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-greeting-text {
+  flex: 1;
+}
+
+.mf-greeting .mf-avatar {
+  flex: none;
+}
+
+p.mf-greeting-title {
+  font-size: var(--mf-size-headline);
+  line-height: 1.4;
+}
+
+.mf-greeting-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mf-side-link {
+  display: inline-block;
+  margin-block-start: 12px;
+  font-weight: 600;
+}
+
+.mf-entry {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-entry:last-child {
+  border-block-end: 0;
+}
+
+.mf-card {
+  box-shadow: var(--mf-shadow-card);
+}
+
+@media (max-width: 767.98px) {
+  .mf-greeting {
+    flex-wrap: wrap;
+  }
+}
+
+.mf-greeting {
+  margin-block-end: 16px;
+}
+
+.mf-kpis {
+  margin-block-end: 24px;
+}
+
+.mf-entry-body {
+  align-items: flex-start;
+}
+
+.mf-entry-body .mf-tag {
+  align-self: flex-start;
+  margin-block-start: 4px;
+}
+
+@media (max-width: 767.98px) {
+  .mf-greeting-text {
+    flex: 1 1 calc(100% - 64px);
+  }
+
+  .mf-greeting-actions {
+    flex: 1 1 100%;
+  }
+}
+
+/* === Rebuild, step 3: tables (stitch-v2 lists) ================================ */
+.mf-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--mf-size-text);
+}
+
+.mf-table caption {
+  padding: 0;
+}
+
+.mf-table th {
+  padding: 12px 16px;
+  border-block-end: 1px solid var(--mf-rule);
+  background-color: var(--mf-bg-soft);
+  color: var(--mf-muted);
+  font-size: var(--mf-size-small);
+  font-weight: 700;
+  text-align: start;
+  white-space: nowrap;
+}
+
+.mf-table td {
+  padding: 14px 16px;
+  border-block-end: 1px solid var(--mf-rule);
+  vertical-align: middle;
+}
+
+.mf-table tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+.mf-table tbody tr:hover {
+  background-color: var(--mf-paper);
+}
+
+.mf-table .mf-num {
+  text-align: end;
+  font-variant-numeric: lining-nums;
+  white-space: nowrap;
+}
+
+.mf-cell-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mf-cell-title {
+  display: block;
+  font-weight: 700;
+}
+
+.mf-cell-sub {
+  display: block;
+  color: var(--mf-muted);
+  font-size: var(--mf-size-small);
+}
+
+.mf-table .mf-index-number {
+  font-family: var(--mf-font-display);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.mf-table .mf-inline-form {
+  flex-wrap: nowrap;
+}
+
+.mf-cell-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* === Rebuild, step 4: detail pages (stitch-v2 hero card) ======================= */
+.mf-detail-head {
+  margin-block-end: 24px;
+  padding: 24px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-detail-head .mf-actions {
+  margin-block-start: 8px;
+  padding-block-start: 16px;
+  border-block-start: var(--mf-rule-light);
+}
+
+.mf-lead {
+  max-inline-size: 70ch;
+  color: var(--mf-ink-soft);
+}
+
+.mf-kpis--3 {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.mf-topbar-trail {
+  flex: 1 1 0;
+  overflow: hidden;
+}
+
+.mf-topbar-trail .mf-crumbs ol {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.mf-topbar-trail .mf-crumbs li:last-child {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === Rebuild, step 5: forms as section cards (stitch-v3 forms) ================== */
+.mf-sheet--form {
+  gap: 16px;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+}
+
+.mf-sheet--form .mf-sheet-head {
+  padding-block-end: 8px;
+}
+
+.mf-form-card {
+  padding: 8px 24px 16px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-form-card .mf-section-head {
+  margin-block: 8px 4px;
+  padding-block: 14px;
+}
+
+.mf-form-card .mf-section-no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-accent-tint);
+  color: var(--mf-accent-hover);
+  font-weight: 800;
+}
+
+.mf-form-card .mf-q {
+  padding-block: 10px;
+  border-block-end: 0;
+}
+
+.mf-form-card .mf-q-number {
+  display: none;
+}
+
+.mf-form-card .mf-q-label {
+  font-family: var(--mf-font-text);
+  font-size: var(--mf-size-small);
+  font-weight: 700;
+}
+
+.mf-sheet--form .mf-sheet-foot {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 5;
+  padding: 14px 24px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-column-side .mf-form-card {
+  padding-inline: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.form-control,
+.form-select {
+  min-block-size: var(--mf-tap);
+  font-size: var(--mf-size-text);
+}
+
+/* === Rebuild, round 2: rhythm, weight, coloured icon squares, density ========== */
+.mf-page {
+  gap: 24px;
+}
+
+.mf-page > .mf-kpis,
+.mf-page > .mf-detail-head,
+.mf-page > .mf-greeting {
+  margin-block-end: 0;
+}
+
+.mf-front {
+  gap: 24px;
+}
+
+.mf-page-title {
+  font-size: var(--mf-size-headline);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.mf-page-head {
+  align-items: center;
+}
+
+.mf-kicker--display {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-accent-tint);
+  color: var(--mf-accent-hover);
+  font-family: var(--mf-font-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mf-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-block-end: 12px;
+  border-block-end: var(--mf-rule-light);
+  font-size: var(--mf-size-section);
+  font-weight: 800;
+}
+
+.mf-kpi-icon {
+  background-color: var(--mf-accent-tint);
+  color: var(--mf-accent-hover);
+}
+
+.mf-kpi--2 .mf-kpi-icon {
+  background-color: var(--mf-ok-tint);
+  color: var(--mf-ok);
+}
+
+.mf-kpi--3 .mf-kpi-icon {
+  background-color: var(--mf-sand-strong);
+  color: var(--mf-ink);
+}
+
+.mf-kpi--4 .mf-kpi-icon {
+  background-color: var(--mf-sand);
+  color: var(--mf-ink-soft);
+}
+
+.mf-kpi-icon .mf-icon {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+.mf-kpi dt {
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-small);
+  font-weight: 700;
+}
+
+.mf-table th {
+  padding-block: 10px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.mf-table td {
+  padding-block: 12px;
+  font-size: var(--mf-size-text);
+}
+
+.mf-table .mf-cell-title {
+  font-weight: 800;
+}
+
+.mf-toolbar {
+  padding: 16px 20px;
+}
+
+.mf-index-item,
+.mf-entry {
+  padding-block: 14px;
+}
+
+.mf-column-side .mf-section-title {
+  font-size: var(--mf-size-card-title);
+}
+
+.mf-facts > div {
+  padding-block: 12px;
+}
+
+.mf-tag {
+  min-block-size: 26px;
+  padding-inline: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mf-photo,
+.mf-card {
+  border-radius: 8px;
+}
+
+/* === Rebuild, stitch-v4 pages: account, invitations, review ==================== */
+.mf-account-columns .mf-column-main {
+  flex-basis: 480px;
+}
+
+.mf-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-end: 20px;
+  padding-block-end: 16px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-org-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mf-org-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 12px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-rules ul {
+  margin: 0 0 16px;
+  padding-inline-start: 20px;
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-small);
+}
+
+.mf-rules li {
+  margin-block: 6px;
+}
+
+.mf-metacards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.mf-metacards > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-metacards dt {
+  color: var(--mf-muted);
+  font-size: var(--mf-size-meta);
+  font-weight: 400;
+}
+
+.mf-metacards dd {
+  margin: 0;
+  font-weight: 800;
+}
+
+.mf-account-tabs,
+.mf-account-columns {
+  max-inline-size: 1000px;
+  margin-inline: auto;
+}
+
+.mf-account-columns {
+  inline-size: 100%;
+}
+
+.mf-toc {
+  margin: 0 0 16px;
+  padding-inline-start: 20px;
+}
+
+.mf-toc li {
+  padding-block: 6px;
+}
+
+.mf-auth-legal {
+  margin-block-start: 8px;
+  text-align: center;
+  font-size: var(--mf-size-small);
+}
+
+.mf-legal .mf-column-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* === Reports (stitch-v3 reports): steps, setup, the report paper ================= */
+.mf-steps {
+  margin-block-end: 0;
+}
+
+.mf-report-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-block: 8px 12px;
+}
+
+.mf-report-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block-end: 16px;
+}
+
+.mf-report-offer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mf-offer-row {
+  padding-block: 8px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-report-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.mf-offer-photo img {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--mf-radius);
+}
+
+.mf-report-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-report-paper {
+  padding: 32px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  box-shadow: var(--mf-shadow-card);
+}
+
+.mf-report-cover {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-block-end: 20px;
+  border-block-end: 2px solid var(--mf-ink);
+}
+
+.mf-report-org {
+  color: var(--mf-ink-soft);
+  font-weight: 700;
+}
+
+.mf-report-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.mf-report-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 8px 0 0;
+}
+
+.mf-report-meta dt {
+  color: var(--mf-muted);
+  font-size: var(--mf-size-meta);
+  font-weight: 400;
+}
+
+.mf-report-meta dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.mf-report-section {
+  margin-block-start: 28px;
+}
+
+.mf-report-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: var(--mf-size-section);
+  font-weight: 800;
+}
+
+.mf-report-no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 28px;
+  block-size: 28px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-accent-tint);
+  color: var(--mf-accent-hover);
+  font-size: 14px;
+}
+
+.mf-report-item {
+  padding-block: 12px;
+  border-block-end: var(--mf-rule-light);
+}
+
+.mf-report-item h3,
+.mf-report-sub {
+  margin: 0 0 4px;
+  font-size: var(--mf-size-card-title);
+  font-weight: 800;
+}
+
+.mf-report-item p {
+  margin: 4px 0;
+}
+
+.mf-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.mf-report-grid figure {
+  margin: 0;
+}
+
+.mf-report-grid img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--mf-radius);
+}
+
+.mf-report-foot {
+  margin-block-start: 28px;
+  padding-block-start: 12px;
+  border-block-start: var(--mf-rule-light);
+}
+
+@media print {
+  .mf-topbar,
+  .mf-sidebar,
+  .mf-tabbar,
+  .demo-banner,
+  .mf-no-print,
+  .mf-skip,
+  .mf-steps,
+  .mf-report-bar {
+    display: none !important;
+  }
+
+  .mf-app--side {
+    display: block;
+  }
+
+  .mf-main {
+    padding: 0;
+  }
+
+  .mf-report-paper {
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .mf-report-section,
+  .mf-report-item,
+  .mf-report-grid figure {
+    break-inside: avoid;
+  }
+
+  body {
+    background: var(--mf-surface);
+  }
+}
+
+/* htmx's own indicator styles are switched off (the policy forbids inline styles). */
+.htmx-indicator {
+  opacity: 0;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+
+.mf-auth-demo {
+  padding-block-start: 16px;
+  border-block-start: var(--mf-rule-light);
+}
+
+.mf-auth-demo-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

@@ -1,0 +1,182 @@
+/*
+ * MediaFlow design tokens: design system version 3 (docs/design/DESIGN.md).
+ *
+ * The single place where colours, fonts and shapes are defined. Everything
+ * here is a CSS variable, and Bootstrap's own variables are pointed at these
+ * values, so Bootstrap components follow the design without inline styles.
+ * See docs/design/DESIGN.md. Colours since design stage R1 are the version 3 values;
+ * the names of version 2 are kept so that pages not yet converted keep working.
+ */
+
+/* --- Font: Noto Kufi Arabic, for headings, numbers and navigation --------- *
+ * Hosted locally (SIL Open Font License, see static/fonts). Body text uses
+ * the system font. unicode-range makes the browser download a file only when
+ * a page actually shows those characters in a heading or number.
+ */
+@font-face {
+  font-family: "Noto Kufi Arabic";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/noto-kufi-arabic-arabic-500.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFC;
+}
+
+@font-face {
+  font-family: "Noto Kufi Arabic";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("../fonts/noto-kufi-arabic-arabic-800.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFC;
+}
+
+/* English headings (design version 3, decision D1): Playfair Display 600,
+ * Latin letters only, hosted locally (SIL Open Font License, see static/fonts). */
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/playfair-display-latin-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F,
+    U+20AC, U+2122, U+2212;
+}
+
+/* Western digits and Latin letters at the heavy weight: the big numbers and
+ * the platform name. */
+@font-face {
+  font-family: "Noto Kufi Arabic";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("../fonts/noto-kufi-arabic-latin-800.woff2") format("woff2");
+  unicode-range: U+0030-0039, U+0041-005A, U+0061-007A;
+}
+
+:root {
+  /* Colours */
+  --mf-paper: #fef9f2; /* the page */
+  --mf-bg-soft: #f8f3ed; /* sidebar, table heads */
+  --mf-sand: #f2ede7;
+  --mf-sand-strong: #e8ded2;
+  --mf-surface: #ffffff;
+  --mf-ink: #1d1b18;
+  --mf-ink-soft: #59413c;
+  --mf-muted: #645d59;
+  --mf-ink-disabled: #6e6257;
+  --mf-accent: #ad351c;
+  --mf-accent-hover: #8b1d05;
+  --mf-accent-tint: #f5ebe8; /* quiet background for tags that need attention */
+  --mf-ok: #264e36; /* approved, valid */
+  --mf-ok-tint: #ebf2ed;
+  --mf-accent-active: #5e190b;
+  --mf-on-accent: #ffffff;
+  --mf-rule: #e8ded2;
+  --mf-rule-strong: #8c716b;
+  --mf-border: #8c716b;
+  --mf-placeholder: #e8ded2;
+  --mf-hover-soft: #f2ede7;
+  --mf-skeleton: #e4dacb;
+
+  /* A field is white on the page and paper-coloured inside a white sheet. */
+  --mf-field-bg: var(--mf-surface);
+
+  /* Fonts */
+  --mf-font-text: system-ui, -apple-system, "Segoe UI", Tahoma, "Noto Sans Arabic", "Noto Sans",
+    Arial, sans-serif;
+  --mf-font-display: var(--mf-font-text);
+
+  /* Shapes and spacing: 4px corners for buttons, square for everything else. */
+  --mf-radius: 4px;
+  --mf-rule-heavy: 3px solid var(--mf-ink);
+  --mf-rule-light: 1px solid var(--mf-rule);
+  --mf-shell-width: 1280px;
+  --mf-sidebar-width: 256px;
+  --mf-topbar-height: 64px;
+  --mf-gutter: 32px;
+  --mf-section-gap: 36px;
+  --mf-tap: 40px;
+
+  --mf-panel-light: #f3eee6; /* behind the log-in picture, step 1 */
+  --mf-panel-night: #1f1b18; /* behind the log-in picture, step 2 */
+  --mf-panel-glow: #f3b99a;
+  --mf-panel-on-night: #f6f1ea;
+  --mf-shadow-card: 0 1px 2px rgba(29, 27, 24, 0.04), 0 2px 8px rgba(29, 27, 24, 0.04);
+
+  /* Motion */
+  --mf-motion-link: 200ms;
+  --mf-motion-press: 120ms;
+
+  /* Type scale */
+  --mf-size-brand: 40px;
+  --mf-size-brand-compact: 28px;
+  --mf-size-headline: 28px;
+  --mf-size-number: 32px;
+  --mf-size-section: 18px;
+  --mf-size-card-title: 16px;
+  --mf-size-text: 15px;
+  --mf-size-small: 13px;
+  --mf-size-meta: 13px;
+
+  /* --- Bootstrap variables, pointed at the tokens above ------------------- */
+  --bs-body-bg: var(--mf-paper);
+  --bs-body-bg-rgb: 254, 249, 242;
+  --bs-body-color: var(--mf-ink);
+  --bs-body-color-rgb: 29, 27, 24;
+  --bs-body-font-family: var(--mf-font-text);
+  --bs-body-font-size: var(--mf-size-text);
+  --bs-body-line-height: 1.6;
+  --bs-emphasis-color: var(--mf-ink);
+  --bs-emphasis-color-rgb: 29, 27, 24;
+  --bs-heading-color: var(--mf-ink);
+  --bs-secondary-color: var(--mf-ink-soft);
+  --bs-secondary-color-rgb: 89, 65, 60;
+  --bs-tertiary-color: var(--mf-ink-soft);
+  --bs-secondary-bg: var(--mf-placeholder);
+  --bs-tertiary-bg: var(--mf-paper);
+
+  --bs-primary: var(--mf-accent);
+  --bs-primary-rgb: 173, 53, 28;
+  --bs-danger: var(--mf-accent);
+  --bs-danger-rgb: 173, 53, 28;
+  --bs-link-color: var(--mf-accent);
+  --bs-link-color-rgb: 173, 53, 28;
+  --bs-link-hover-color: var(--mf-accent-hover);
+  --bs-link-hover-color-rgb: 139, 29, 5;
+
+  --bs-border-color: var(--mf-border);
+  --bs-border-color-translucent: var(--mf-border);
+  --bs-border-radius: 0;
+  --bs-border-radius-sm: 0;
+  --bs-border-radius-lg: 0;
+  --bs-border-radius-xl: 0;
+  --bs-border-radius-xxl: 0;
+
+  /* No shadows anywhere. */
+  --bs-box-shadow: none;
+  --bs-box-shadow-sm: none;
+  --bs-box-shadow-lg: none;
+  --bs-box-shadow-inset: none;
+  --bs-focus-ring-width: 0;
+}
+
+/* Arabic interface: Kufi for headings and numbers. English: Playfair Display for headings. */
+:root:lang(ar) {
+  --mf-font-display: "Noto Kufi Arabic", var(--mf-font-text);
+}
+
+:root:lang(en) {
+  --mf-font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+@media (max-width: 575.98px) {
+  :root {
+    --mf-gutter: 16px;
+    --mf-size-brand: 28px;
+    --mf-size-brand-compact: 22px;
+    --mf-size-headline: 24px;
+    --mf-size-number: 28px;
+    --mf-tap: 44px;
+  }
+}

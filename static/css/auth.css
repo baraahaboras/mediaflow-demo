@@ -1,0 +1,371 @@
+/* The two log-in steps: the card on one side, a picture panel on the other (stitch-auth 02, 03).
+ * Loaded only on those pages. The picture moves by itself (no mouse): a slow float, a very slight
+ * turn and a soft diagonal shine. It needs the transform property, which the rest of the
+ * application deliberately never uses, so it lives in this file. Only transform and opacity
+ * move. All motion stops for people who ask their system for less motion. */
+
+.mf-split-top {
+  padding-block: 20px;
+}
+
+.mf-split {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 1280px;
+  margin-inline: auto;
+  padding: 8px var(--mf-gutter) 40px;
+}
+
+.mf-split-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: stretch;
+}
+
+.mf-split .mf-auth-card {
+  align-self: start;
+  max-inline-size: none;
+}
+
+.mf-auth-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  padding: 24px 28px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+}
+
+.mf-panel--light {
+  background-color: var(--mf-panel-light);
+}
+
+.mf-panel--night {
+  border-color: var(--mf-panel-night);
+  background-color: var(--mf-panel-night);
+  color: var(--mf-panel-on-night);
+}
+
+.mf-float-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+}
+
+/* The picture: float of 6 px, a turn of 1.5 degrees on both axes, one cycle of 7 seconds
+ * (8 in step 2, so the two pages do not move in step). */
+.mf-float {
+  position: relative;
+  inline-size: min(100%, 400px);
+  animation: mf-drift 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.mf-panel--night .mf-float {
+  animation-duration: 8s;
+  animation-delay: -2s;
+}
+
+/* The mask fades the square picture into the panel; the shine lives inside the same mask. */
+.mf-float-frame {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
+}
+
+.mf-panel-image {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.mf-float-frame::after {
+  content: "";
+  position: absolute;
+  inset-block: -20% -20%;
+  inset-inline-start: -60%;
+  inline-size: 40%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 255 255 / 22%) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+  animation: mf-shine 9s ease-in-out infinite;
+}
+
+.mf-panel--night .mf-float-frame::after {
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 235 220 / 14%) 50%,
+    transparent 100%
+  );
+  animation-delay: -4s;
+}
+
+@keyframes mf-drift {
+  0%,
+  100% {
+    transform: translate3d(0, -6px, 0) rotateX(1.5deg) rotateY(-1.5deg);
+  }
+
+  50% {
+    transform: translate3d(0, 6px, 0) rotateX(-1.5deg) rotateY(1.5deg);
+  }
+}
+
+@keyframes mf-shine {
+  0%,
+  62% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) skewX(-12deg);
+  }
+
+  72% {
+    opacity: 1;
+  }
+
+  92%,
+  100% {
+    opacity: 0;
+    transform: translate3d(380%, 0, 0) skewX(-12deg);
+  }
+}
+
+.mf-panel-eyebrow {
+  margin: 0;
+  color: var(--mf-accent);
+  font-size: var(--mf-size-small);
+  font-weight: 700;
+}
+
+.mf-panel--night .mf-panel-title {
+  color: var(--mf-panel-on-night);
+}
+
+.mf-panel--night .mf-panel-eyebrow {
+  color: var(--mf-panel-glow);
+}
+
+.mf-panel-title {
+  margin: 4px 0 16px;
+  font-size: var(--mf-size-headline);
+  line-height: 1.3;
+}
+
+.mf-panel-features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mf-panel-features li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--mf-rule);
+  border-radius: 8px;
+  background-color: var(--mf-surface);
+  color: var(--mf-ink);
+  font-size: var(--mf-size-small);
+  line-height: 1.5;
+}
+
+.mf-panel--night .mf-panel-features li {
+  border-color: var(--mf-ink-soft);
+  background-color: transparent;
+  color: var(--mf-panel-on-night);
+}
+
+.mf-panel-features strong {
+  display: block;
+  margin-block-end: 2px;
+  font-size: var(--mf-size-text);
+}
+
+.mf-panel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-accent-tint);
+  color: var(--mf-accent-hover);
+}
+
+.mf-split-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block-start: 16px;
+  border-block-start: var(--mf-rule-light);
+}
+
+/* Step 2: a very light pulse of glow behind the lock (cycle of 4 seconds), and small lights
+ * floating around the picture, by CSS alone. */
+.mf-glow {
+  position: absolute;
+  inset: 22% 22%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(243 185 154 / 28%) 0%, transparent 68%);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: mf-pulse 4s ease-in-out infinite;
+}
+
+@keyframes mf-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.04);
+  }
+}
+
+.mf-sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mf-sparks i {
+  position: absolute;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background-color: var(--mf-panel-glow);
+  opacity: 0.7;
+  animation: mf-spark 7s ease-in-out infinite;
+}
+
+.mf-sparks i:nth-child(1) {
+  inset-block-start: 12%;
+  inset-inline-start: 18%;
+}
+
+.mf-sparks i:nth-child(2) {
+  inset-block-start: 22%;
+  inset-inline-start: 78%;
+  inline-size: 4px;
+  block-size: 4px;
+  animation-delay: -1.4s;
+}
+
+.mf-sparks i:nth-child(3) {
+  inset-block-start: 40%;
+  inset-inline-start: 8%;
+  animation-delay: -2.8s;
+}
+
+.mf-sparks i:nth-child(4) {
+  inset-block-start: 58%;
+  inset-inline-start: 88%;
+  inline-size: 8px;
+  block-size: 8px;
+  animation-delay: -4.2s;
+}
+
+.mf-sparks i:nth-child(5) {
+  inset-block-start: 74%;
+  inset-inline-start: 24%;
+  inline-size: 4px;
+  block-size: 4px;
+  animation-delay: -5.6s;
+}
+
+.mf-sparks i:nth-child(6) {
+  inset-block-start: 84%;
+  inset-inline-start: 66%;
+  animation-delay: -0.7s;
+}
+
+.mf-sparks i:nth-child(7) {
+  inset-block-start: 6%;
+  inset-inline-start: 52%;
+  inline-size: 4px;
+  block-size: 4px;
+  animation-delay: -3.5s;
+}
+
+.mf-sparks i:nth-child(8) {
+  inset-block-start: 48%;
+  inset-inline-start: 94%;
+  inline-size: 4px;
+  block-size: 4px;
+  animation-delay: -2.1s;
+}
+
+@keyframes mf-spark {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    opacity: 0.95;
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+/* Small screens: the form comes first and the picture panel is left out. The picture is lazy and
+ * its panel is not displayed, so it is not even fetched. */
+@media (max-width: 991.98px) {
+  .mf-split-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mf-auth-panel {
+    display: none;
+  }
+
+  .mf-split .mf-auth-card {
+    max-inline-size: 480px;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .mf-split {
+    padding-inline: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mf-float,
+  .mf-float-frame::after,
+  .mf-glow {
+    animation: none;
+    transform: none;
+  }
+
+  .mf-float-frame::after {
+    opacity: 0;
+  }
+
+  .mf-sparks i {
+    animation: none;
+    opacity: 0.5;
+  }
+}

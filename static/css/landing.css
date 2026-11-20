@@ -1,0 +1,835 @@
+/* The landing page (the address of the site, for visitors who are not signed in). Loaded only
+ * there. It needs the transform property for its motion, which the rest of the application
+ * deliberately never uses, so it lives in this file. Only transform and opacity move. Nothing
+ * follows the mouse. Everything that moves stops for people who ask their system for less motion.
+ * The content is readable without any script: the hidden-until-seen state exists only when the
+ * boot script has marked the page (js-landing) and the visitor has not asked for less motion. */
+
+/* The colour of each band is the colour of its picture's background (taken from the picture, see
+ * scripts/build_landing_images.py), so the picture melts into the page. Between two bands the
+ * colour changes over a short, soft gradient. */
+html body {
+  background-color: #e8ded1;
+}
+
+.lp-band {
+  --lp-prev: #e8ded1;
+  --lp-this: #e8ded1;
+  background: linear-gradient(to bottom, var(--lp-prev) 0, var(--lp-this) 40px, var(--lp-this) 100%);
+}
+
+.lp-band--hero {
+  --lp-prev: #e8ded1;
+  --lp-this: #e8ded1;
+}
+
+.lp-band--activities {
+  --lp-prev: #e8ded1;
+  --lp-this: #f0eade;
+}
+
+.lp-band--consent {
+  --lp-prev: #f0eade;
+  --lp-this: #e9dfd2;
+}
+
+.lp-band--review {
+  --lp-prev: #e9dfd2;
+  --lp-this: #ebe7dc;
+}
+
+.lp-band--reports {
+  --lp-prev: #ebe7dc;
+  --lp-this: #e9dfd3;
+}
+
+.lp-band--closing,
+.lp-band--foot {
+  --lp-prev: #e9dfd3;
+  --lp-this: #e9dfd3;
+}
+
+/* --- Top bar: light, transparent over the page, with a soft background once the page scrolls --- */
+
+.lp-sentinel {
+  position: absolute;
+  inset-block-start: 0;
+  inline-size: 1px;
+  block-size: 24px;
+  pointer-events: none;
+}
+
+.lp-top {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 100;
+  padding-block: 12px;
+}
+
+.lp-top::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-block-end: 1px solid var(--mf-rule);
+  background-color: rgb(254 249 242 / 92%);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.lp-top--stuck::before {
+  opacity: 1;
+}
+
+.lp-top-in {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  max-inline-size: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--mf-gutter);
+}
+
+.lp-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* --- Sections --- */
+
+.lp {
+  display: block;
+}
+
+.lp-section {
+  display: grid;
+  grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+  gap: 48px;
+  align-items: center;
+  box-sizing: border-box;
+  max-inline-size: 1200px;
+  margin-inline: auto;
+  padding: 56px var(--mf-gutter) 56px;
+}
+
+.lp-section--flip {
+  grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+}
+
+/* The first screen: tall enough that the next section starts to show at the bottom. */
+.lp-hero {
+  min-block-size: calc(100svh - 190px);
+}
+
+.lp-section--flip .lp-art {
+  order: -1;
+}
+
+/* The head of a section, newspaper style: a short thin rule and the number with the name. */
+.lp-kicker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 14px;
+  color: var(--mf-accent);
+  font-size: var(--mf-size-small);
+  font-weight: 700;
+}
+
+.lp-kicker::before {
+  content: "";
+  inline-size: 48px;
+  block-size: 2px;
+  background-color: var(--mf-accent);
+}
+
+.lp-eyebrow {
+  margin: 0 0 8px;
+  color: var(--mf-accent);
+  font-size: var(--mf-size-small);
+  font-weight: 700;
+}
+
+.lp-title {
+  margin: 0 0 16px;
+  font-family: var(--mf-font-display);
+  font-size: clamp(1.625rem, 3vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.lp-hero-title {
+  margin: 0 0 20px;
+  font-family: var(--mf-font-display);
+  font-size: clamp(2.25rem, 4.2vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.lp-lead {
+  margin: 0 0 20px;
+  max-inline-size: 34em;
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-section);
+  line-height: 1.7;
+}
+
+.lp-points {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--mf-ink);
+}
+
+.lp-points li {
+  position: relative;
+  padding-inline-start: 22px;
+}
+
+.lp-points li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.65em;
+  inset-inline-start: 0;
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: 50%;
+  background-color: var(--mf-accent);
+}
+
+.lp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block-start: 8px;
+}
+
+.lp-actions--center {
+  justify-content: center;
+}
+
+.lp-closing {
+  display: block;
+  padding-block: 88px;
+  text-align: center;
+}
+
+.lp-closing .lp-lead {
+  margin-inline: auto;
+}
+
+.lp-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  max-inline-size: 1200px;
+  margin-inline: auto;
+  padding: 24px var(--mf-gutter) 40px;
+  border-block-start: var(--mf-rule-light);
+}
+
+/* --- Pictures --- */
+
+.lp-art {
+  min-inline-size: 0;
+}
+
+.lp-img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+/* The picture's own background equals the colour of its band, so no mask is needed. */
+.lp-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+/* A soft diagonal shine that crosses each picture every few seconds. */
+.lp-frame::after {
+  content: "";
+  position: absolute;
+  inset-block: -20%;
+  inset-inline-start: -60%;
+  inline-size: 36%;
+  background: linear-gradient(100deg, transparent 0%, rgb(255 255 255 / 30%) 50%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  animation: lp-shine 9s ease-in-out infinite;
+}
+
+/* The float: 6 px up and down and a turn of 1.5 degrees, each picture on its own timing. */
+.lp-fx {
+  animation: lp-drift 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.lp-fx--2 {
+  animation-duration: 6.4s;
+  animation-delay: -1.5s;
+}
+
+.lp-fx--3 {
+  animation-duration: 7.6s;
+  animation-delay: -3s;
+}
+
+.lp-fx--4 {
+  animation-duration: 6.8s;
+  animation-delay: -4.2s;
+}
+
+.lp-fx--5 {
+  animation-duration: 8s;
+  animation-delay: -2.2s;
+}
+
+.lp-fx--2 .lp-frame::after {
+  animation-delay: -2s;
+}
+
+.lp-fx--3 .lp-frame::after {
+  animation-delay: -4s;
+}
+
+.lp-fx--4 .lp-frame::after {
+  animation-delay: -6s;
+}
+
+.lp-fx--5 .lp-frame::after {
+  animation-delay: -7.5s;
+}
+
+@keyframes lp-drift {
+  0%,
+  100% {
+    transform: translate3d(0, -6px, 0) rotate(-1.5deg);
+  }
+
+  50% {
+    transform: translate3d(0, 6px, 0) rotate(1.5deg);
+  }
+}
+
+@keyframes lp-shine {
+  0%,
+  62% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) skewX(-12deg);
+  }
+
+  72% {
+    opacity: 1;
+  }
+
+  92%,
+  100% {
+    opacity: 0;
+    transform: translate3d(420%, 0, 0) skewX(-12deg);
+  }
+}
+
+/* With a script: motion only while the picture is on screen, and never in a hidden tab. */
+.js-landing .lp-fx:not(.is-active),
+.js-landing .lp-fx:not(.is-active) .lp-frame::after,
+.lp-paused .lp-fx,
+.lp-paused .lp-frame::after {
+  animation-play-state: paused;
+}
+
+/* --- Sections rise once into view (900 ms, 24 px) --- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .js-landing .lp-reveal {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition:
+      opacity 900ms ease,
+      transform 900ms ease;
+  }
+
+  .js-landing .lp-reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* If the script never runs, the page shows itself after a moment. */
+  .js-landing:not(.lp-ready) .lp-reveal {
+    animation: lp-show 0s 2.5s forwards;
+  }
+}
+
+@keyframes lp-show {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- The opening stamp (an overlay on this page) --- */
+
+.lp-splash {
+  display: none;
+}
+
+.lp-splash-on .lp-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: block;
+  background-color: #efe9dd;
+  transition: opacity 200ms ease;
+  cursor: pointer;
+}
+
+.lp-splash-out .lp-splash {
+  opacity: 0;
+}
+
+/* The skip button is always visible, on every screen of the opening. */
+.lp-splash-skip {
+  position: absolute;
+  inset-block-start: 20px;
+  inset-inline-end: 20px;
+  z-index: 3;
+  padding: 8px 16px;
+  border: 1px solid var(--mf-border);
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-surface);
+  color: var(--mf-ink);
+  font-size: var(--mf-size-small);
+}
+
+/* One screen of the opening at a time; a tap, Enter or Space goes to the next. The next screen
+ * fades in over 600 ms on top of the one before, so the change from the dark screen to the light
+ * one is soft, never a jump in brightness. */
+.lp-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 600ms ease,
+    visibility 0s linear 600ms;
+}
+
+.lp-screen.is-current {
+  z-index: 2;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 600ms ease;
+}
+
+/* The screen before stays underneath until the new one is fully there. */
+.lp-screen.is-leaving {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+}
+
+.lp-screen--stamp {
+  background-color: #efe9dd;
+}
+
+/* First screen: the media people on their dark background. */
+.lp-screen--media {
+  justify-content: flex-start;
+  background-color: #241813;
+  color: var(--mf-panel-on-night);
+}
+
+.lp-media-brand {
+  position: absolute;
+  inset-block-start: 20px;
+  inset-inline-start: 24px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mf-font-display);
+  font-size: var(--mf-size-section);
+  font-weight: 800;
+}
+
+.lp-media-brand .mf-mark {
+  color: var(--mf-panel-glow);
+  font-size: 22px;
+}
+
+.lp-media-stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  min-block-size: 0;
+}
+
+.lp-media-pic,
+.lp-media-pic img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  max-block-size: 100%;
+  object-fit: contain;
+}
+
+.lp-media-pic {
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.lp-media-pic.is-loaded {
+  opacity: 1;
+}
+
+.lp-media-copy {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-inline: auto;
+  max-inline-size: min(46vw, 660px);
+  text-align: center;
+}
+
+.lp-media-headline {
+  margin: 0 0 8px;
+  font-family: var(--mf-font-display);
+  font-size: clamp(1.75rem, 3.2vw, 3rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.lp-media-tag {
+  margin: 0 0 24px;
+  color: var(--mf-panel-glow);
+  font-size: var(--mf-size-section);
+}
+
+.lp-start {
+  padding: 12px 28px;
+  border: 0;
+  border-radius: var(--mf-radius);
+  background-color: var(--mf-accent);
+  color: var(--mf-on-accent);
+  font-size: var(--mf-size-section);
+  font-weight: 700;
+}
+
+.lp-media-note {
+  margin: 16px 0 0;
+  color: var(--mf-panel-on-night);
+  font-size: var(--mf-size-small);
+  opacity: 0;
+}
+
+.lp-media-brand,
+.lp-media-headline,
+.lp-media-tag,
+.lp-start {
+  opacity: 0;
+}
+
+/* The copy rises into place, one line after the other; then the note breathes. */
+.lp-screen--media.is-playing .lp-media-brand,
+.lp-screen--media.is-playing .lp-media-headline,
+.lp-screen--media.is-playing .lp-media-tag,
+.lp-screen--media.is-playing .lp-start {
+  animation: lp-rise-in 700ms ease forwards;
+}
+
+.lp-screen--media.is-playing .lp-media-headline {
+  animation-delay: 150ms;
+}
+
+.lp-screen--media.is-playing .lp-media-tag {
+  animation-delay: 350ms;
+}
+
+.lp-screen--media.is-playing .lp-start {
+  animation-delay: 600ms;
+}
+
+.lp-screen--media.is-playing .lp-media-note {
+  animation:
+    lp-fade-in 500ms ease 1.3s forwards,
+    lp-breathe 2.6s ease-in-out 1.8s infinite;
+}
+
+@keyframes lp-rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* "Tap to continue": appears when the screen's motion has finished, then breathes slowly. */
+.lp-continue {
+  position: absolute;
+  inset-block-end: 7vh;
+  padding: 8px 16px;
+  border: 0;
+  background: none;
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-text);
+  opacity: 0;
+}
+
+.lp-screen--stamp.is-playing .lp-continue {
+  animation:
+    lp-fade-in 500ms ease 1.8s forwards,
+    lp-breathe 2.6s ease-in-out 2.3s infinite;
+}
+
+@keyframes lp-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.lp-stamp {
+  position: relative;
+  inline-size: min(84vw, 50vh, 460px);
+  aspect-ratio: 1;
+}
+
+.lp-stamp picture,
+.lp-stamp img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* A light fade on the last few percent of the base picture removes any trace of its edge. */
+.lp-stamp-base {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent),
+    linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent),
+    linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+  mask-composite: intersect;
+}
+
+/* The shadow is drawn by the page: an ellipse under the stamp that grows and darkens as it comes
+ * down (the imprint sits at 49% across and 56% down the base picture). */
+.lp-stamp-shadow {
+  position: absolute;
+  inset-block-start: 51%;
+  inset-inline-start: 31%;
+  inline-size: 38%;
+  block-size: 10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(29 27 24 / 55%), transparent);
+  opacity: 0;
+}
+
+.lp-stamp-imprint {
+  opacity: 0;
+}
+
+.lp-stamp-top {
+  opacity: 0;
+  transform-origin: 53% 48%;
+}
+
+.lp-splash-name {
+  margin: 8px 0 0;
+  font-family: var(--mf-font-display);
+  font-size: var(--mf-size-brand);
+  font-weight: 800;
+  opacity: 0;
+}
+
+.lp-splash-line {
+  margin: 0;
+  color: var(--mf-ink-soft);
+  font-size: var(--mf-size-section);
+  opacity: 0;
+}
+
+/* The sequence (1.7 s): the stamp comes down, presses with a slight squash while the imprint
+ * fades in fast, then rises. */
+.lp-screen.is-playing .lp-stamp-top {
+  animation: lp-stamp-move 1.7s ease-in-out forwards;
+}
+
+.lp-screen.is-playing .lp-stamp-imprint {
+  animation: lp-stamp-imprint 1.7s linear forwards;
+}
+
+.lp-screen.is-playing .lp-stamp-shadow {
+  animation: lp-stamp-shadow 1.7s ease-in-out forwards;
+}
+
+.lp-screen.is-playing .lp-splash-name,
+.lp-screen.is-playing .lp-splash-line {
+  animation: lp-fade-in 600ms ease 300ms forwards;
+}
+
+@keyframes lp-stamp-move {
+  0% {
+    opacity: 0;
+    transform: translate3d(-3.7%, -26%, 0);
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate3d(-3.7%, 9.5%, 0) scale(1, 1);
+  }
+
+  57% {
+    transform: translate3d(-3.7%, 10%, 0) scale(1.03, 0.95);
+  }
+
+  66% {
+    opacity: 1;
+    transform: translate3d(-3.7%, 9.5%, 0) scale(1, 1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-3.7%, -30%, 0);
+  }
+}
+
+@keyframes lp-stamp-imprint {
+  0%,
+  52% {
+    opacity: 0;
+  }
+
+  60%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes lp-stamp-shadow {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+
+  66% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes lp-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- Small screens: the picture comes first, then the text --- */
+
+@media (max-width: 767.98px) {
+  .lp-section,
+  .lp-section--flip,
+  .lp-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    min-block-size: 0;
+    padding-block: 32px;
+  }
+
+  .lp-art,
+  .lp-section--flip .lp-art {
+    order: -1;
+  }
+
+  .lp-closing {
+    padding-block: 64px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .lp-screen--media {
+    justify-content: center;
+  }
+
+  .lp-media-stage {
+    flex: none;
+    flex-direction: column-reverse;
+  }
+
+  .lp-media-copy {
+    position: static;
+    max-inline-size: 90vw;
+    padding-block: 24px;
+  }
+}
+
+/* On phones the office picture is the cropped one (the laptop and its tools). */
+@media (max-width: 575.98px) {
+  .lp-img--office {
+    aspect-ratio: 680 / 510;
+  }
+
+  .lp-top-in,
+  .lp-section,
+  .lp-foot {
+    padding-inline: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-fx,
+  .lp-frame::after {
+    animation: none;
+    transform: none;
+  }
+
+  .lp-frame::after {
+    opacity: 0;
+  }
+
+  .lp-splash {
+    display: none;
+  }
+}

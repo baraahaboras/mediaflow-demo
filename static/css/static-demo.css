@@ -1,0 +1,62 @@
+/* Only for the static copy of the demo (manage.py export_static). */
+
+/* A link to a page that does not exist in the copy: plain, dimmed text. */
+.mf-static-off {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+  text-decoration: none;
+}
+
+/* The one small note on a page whose forms are shown but disabled. */
+.mf-static-note {
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  background: var(--mf-cream, #f8f3ed);
+  border: 1px dashed rgba(33, 28, 25, 0.3);
+  color: var(--mf-ink-soft, #5d544d);
+  font-size: 0.875rem;
+}
+
+[data-static-demo] :disabled {
+  cursor: not-allowed;
+}
+
+/* The role buttons that replace the log-in form. */
+.mf-static-roles {
+  display: grid;
+  gap: 0.75rem;
+  margin-block-start: 1.25rem;
+}
+
+/* The language chooser at the root of the site. */
+.mf-root {
+  min-block-size: 100vh;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  background: #f8f3ed;
+  color: #211c19;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+}
+
+.mf-root-card {
+  padding: 2rem 1rem;
+}
+
+.mf-root-links {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-block-start: 1.5rem;
+}
+
+.mf-root-links a {
+  padding: 0.6rem 1.4rem;
+  border-radius: 0.5rem;
+  background: #ad351c;
+  color: #fff;
+  text-decoration: none;
+}
