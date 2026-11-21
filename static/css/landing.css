@@ -375,7 +375,7 @@ html body {
   }
 }
 
-/* --- The opening stamp (an overlay on this page) --- */
+/* --- The opening (an overlay on this page): one screen, the media people --- */
 
 .lp-splash {
   display: none;
@@ -443,10 +443,6 @@ html body {
   transition: none;
 }
 
-.lp-screen--stamp {
-  background-color: #efe9dd;
-}
-
 /* First screen: the media people on their dark background. */
 .lp-screen--media {
   justify-content: flex-start;
@@ -480,6 +476,31 @@ html body {
   justify-content: center;
   inline-size: 100%;
   min-block-size: 0;
+}
+
+.lp-media-art {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  inline-size: 100%;
+  min-block-size: 0;
+  max-block-size: 100%;
+}
+
+/* The clip sits on top of the picture (its poster) and fades in only when it really plays. */
+.lp-media-video {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 400ms ease;
+  pointer-events: none;
+}
+
+.lp-media-video.is-playing {
+  opacity: 1;
 }
 
 .lp-media-pic,
@@ -587,24 +608,6 @@ html body {
   }
 }
 
-/* "Tap to continue": appears when the screen's motion has finished, then breathes slowly. */
-.lp-continue {
-  position: absolute;
-  inset-block-end: 7vh;
-  padding: 8px 16px;
-  border: 0;
-  background: none;
-  color: var(--mf-ink-soft);
-  font-size: var(--mf-size-text);
-  opacity: 0;
-}
-
-.lp-screen--stamp.is-playing .lp-continue {
-  animation:
-    lp-fade-in 500ms ease 1.8s forwards,
-    lp-breathe 2.6s ease-in-out 2.3s infinite;
-}
-
 @keyframes lp-breathe {
   0%,
   100% {
@@ -616,153 +619,339 @@ html body {
   }
 }
 
-.lp-stamp {
-  position: relative;
-  inline-size: min(84vw, 50vh, 460px);
-  aspect-ratio: 1;
-}
-
-.lp-stamp picture,
-.lp-stamp img {
-  position: absolute;
-  inset: 0;
-  inline-size: 100%;
-  block-size: 100%;
-}
-
-/* A light fade on the last few percent of the base picture removes any trace of its edge. */
-.lp-stamp-base {
-  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent),
-    linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent),
-    linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
-  mask-composite: intersect;
-}
-
-/* The shadow is drawn by the page: an ellipse under the stamp that grows and darkens as it comes
- * down (the imprint sits at 49% across and 56% down the base picture). */
-.lp-stamp-shadow {
-  position: absolute;
-  inset-block-start: 51%;
-  inset-inline-start: 31%;
-  inline-size: 38%;
-  block-size: 10%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(29 27 24 / 55%), transparent);
-  opacity: 0;
-}
-
-.lp-stamp-imprint {
-  opacity: 0;
-}
-
-.lp-stamp-top {
-  opacity: 0;
-  transform-origin: 53% 48%;
-}
-
-.lp-splash-name {
-  margin: 8px 0 0;
-  font-family: var(--mf-font-display);
-  font-size: var(--mf-size-brand);
-  font-weight: 800;
-  opacity: 0;
-}
-
-.lp-splash-line {
-  margin: 0;
-  color: var(--mf-ink-soft);
-  font-size: var(--mf-size-section);
-  opacity: 0;
-}
-
-/* The sequence (1.7 s): the stamp comes down, presses with a slight squash while the imprint
- * fades in fast, then rises. */
-.lp-screen.is-playing .lp-stamp-top {
-  animation: lp-stamp-move 1.7s ease-in-out forwards;
-}
-
-.lp-screen.is-playing .lp-stamp-imprint {
-  animation: lp-stamp-imprint 1.7s linear forwards;
-}
-
-.lp-screen.is-playing .lp-stamp-shadow {
-  animation: lp-stamp-shadow 1.7s ease-in-out forwards;
-}
-
-.lp-screen.is-playing .lp-splash-name,
-.lp-screen.is-playing .lp-splash-line {
-  animation: lp-fade-in 600ms ease 300ms forwards;
-}
-
-@keyframes lp-stamp-move {
-  0% {
-    opacity: 0;
-    transform: translate3d(-3.7%, -26%, 0);
-  }
-
-  12% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 1;
-    transform: translate3d(-3.7%, 9.5%, 0) scale(1, 1);
-  }
-
-  57% {
-    transform: translate3d(-3.7%, 10%, 0) scale(1.03, 0.95);
-  }
-
-  66% {
-    opacity: 1;
-    transform: translate3d(-3.7%, 9.5%, 0) scale(1, 1);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate3d(-3.7%, -30%, 0);
-  }
-}
-
-@keyframes lp-stamp-imprint {
-  0%,
-  52% {
-    opacity: 0;
-  }
-
-  60%,
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes lp-stamp-shadow {
-  0% {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-
-  50% {
-    opacity: 0.55;
-    transform: scale(1);
-  }
-
-  66% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-}
-
 @keyframes lp-fade-in {
   to {
     opacity: 1;
+  }
+}
+
+/* --- The scene: the whole page is one continuous shot ---
+ * The classic sections (pictures, text) are the page unless the boot file adds lp-scene-on (no
+ * request for less motion, no Save-Data, no 2g). Then they are hidden and the scene plays: a
+ * canvas fixed over the whole screen shows the pictures in step with the scroll, two veils and a
+ * vignette keep the text readable, and each stage's text sits fixed over it while that stage's
+ * part of the scroll goes by. Stages are empty spacers in the page's flow; landing.js sets their
+ * heights from data-length and data-gap (screens of scrolling, in hundredths). Only transform and
+ * opacity move. */
+.lp-cine {
+  display: none;
+}
+
+.lp-scene-on .lp-classic {
+  display: none;
+}
+
+.lp-scene-on .lp-cine {
+  display: block;
+  position: relative;
+}
+
+html.lp-scene-on body {
+  background-color: #241813;
+}
+
+.lp-cine-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background-color: #241813;
+  pointer-events: none;
+}
+
+.lp-cine-canvas {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.lp-cine.is-ready .lp-cine-canvas {
+  opacity: 1;
+}
+
+/* Two veils: a dark one under light text, a cream one under dark text. The script fades each in
+ * while a stage of that kind is on screen. */
+.lp-cine-veil {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.lp-cine-veil--dark {
+  background-color: rgb(18 12 10 / 42%);
+}
+
+.lp-cine-veil--light {
+  background-color: rgb(243 236 226 / 48%);
+}
+
+/* The vignette: clear in the middle, darker toward the edges, always on. */
+.lp-cine-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 46%, transparent 52%, rgb(20 14 12 / 56%) 100%);
+}
+
+/* Stages: spacers (the script gives them their height), each with its text fixed over the scene. */
+.lp-stage {
+  position: relative;
+  display: block;
+  pointer-events: none;
+}
+
+.lp-stage-copy {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 96px var(--mf-gutter) 56px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The script sets opacity and the small lift on every scroll step; a short transition smooths it.
+ * Nothing shows before the first picture is there, and the first text arrives in 900 ms. */
+.lp-stage-copy {
+  transition:
+    opacity 160ms linear,
+    transform 160ms linear;
+}
+
+.lp-cine:not(.is-ready) .lp-stage-copy {
+  opacity: 0 !important;
+}
+
+.lp-cine.is-entering .lp-stage-copy {
+  transition:
+    opacity 900ms ease,
+    transform 900ms ease;
+}
+
+.lp-stage-text {
+  box-sizing: border-box;
+  inline-size: min(100%, 36rem);
+  margin-inline-end: auto;
+}
+
+/* Only the stage on screen can be clicked; the others, though they cover the page, are not. */
+.lp-stage-copy.is-live .lp-stage-text,
+.lp-stage-copy.is-live .lp-stage-foot {
+  pointer-events: auto;
+}
+
+.lp-stage-text--center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.lp-stage-text--center .lp-lead {
+  margin-inline: auto;
+}
+
+.lp-stage-text h1,
+.lp-stage-text h2 {
+  color: inherit;
+}
+
+.lp-stage .lp-title {
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+}
+
+.lp-stage .lp-hero-title {
+  font-size: clamp(2.4rem, 4.8vw, 4rem);
+}
+
+.lp-stage .lp-lead {
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+}
+
+.lp-stage .lp-points {
+  font-size: var(--mf-size-text);
+}
+
+/* Over the dark pictures, a soft pool of shadow behind the text, never a box. */
+.lp-stage[data-tone="paper"] .lp-stage-text {
+  position: relative;
+  isolation: isolate;
+}
+
+.lp-stage[data-tone="paper"] .lp-stage-text::before {
+  content: "";
+  position: absolute;
+  inset: -56px -72px;
+  z-index: -1;
+  background: radial-gradient(ellipse at 45% 50%, rgb(18 12 10 / 58%) 0, transparent 70%);
+  pointer-events: none;
+}
+
+.lp-stage[data-tone="paper"] .btn-outline-secondary {
+  border-color: rgb(251 246 239 / 75%);
+  color: #fbf6ef;
+}
+
+/* Text colour follows the picture under it: ink on the pale pictures, paper on the dark ones. */
+.lp-stage[data-tone="ink"] .lp-stage-text {
+  color: var(--mf-ink);
+}
+
+.lp-stage[data-tone="paper"] .lp-stage-text {
+  color: #fbf6ef;
+  text-shadow: 0 1px 18px rgb(18 12 10 / 55%);
+}
+
+.lp-stage[data-tone="paper"] .lp-lead,
+.lp-stage[data-tone="paper"] .lp-points {
+  color: #f1e9de;
+}
+
+.lp-stage[data-tone="paper"] .lp-kicker,
+.lp-stage[data-tone="paper"] .lp-eyebrow {
+  color: #ffb59f;
+}
+
+.lp-stage[data-tone="paper"] .lp-kicker::before {
+  background-color: #ffb59f;
+}
+
+.lp-stage[data-tone="ink"] .lp-lead {
+  color: var(--mf-ink);
+}
+
+.lp-stage-foot {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  border-block-start: 1px solid rgb(251 246 239 / 25%);
+  color: #f1e9de;
+}
+
+.lp-stage-foot a,
+.lp-stage-foot .mf-meta,
+.lp-stage-foot .mf-brand {
+  color: #f1e9de;
+}
+
+/* The top bar floats over the scene, softly blurred. */
+.lp-scene-on .lp-top {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-start: 0;
+}
+
+.lp-scene-on .lp-top::before {
+  opacity: 1;
+  background-color: rgb(254 249 242 / 70%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* The rail at the end of the line: four notches like the holes of a film strip; the one of the
+ * stage on screen is filled and shows its number. */
+.lp-cine-rail {
+  position: fixed;
+  inset-inline-end: 20px;
+  inset-block-start: 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  opacity: 0;
+  transform: translate3d(0, -50%, 0);
+  transition: opacity 400ms ease;
+  pointer-events: none;
+}
+
+.lp-cine-rail.is-on {
+  opacity: 1;
+}
+
+.lp-cine-rail li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  color: #fbf6ef;
+  font-size: var(--mf-size-small);
+  font-weight: 700;
+}
+
+.lp-cine-rail li::after {
+  content: "";
+  inline-size: 10px;
+  block-size: 14px;
+  border: 2px solid rgb(251 246 239 / 70%);
+  border-radius: 2px;
+  background-color: transparent;
+  box-shadow: 0 0 0 1px rgb(18 12 10 / 35%);
+}
+
+.lp-cine-rail li span {
+  opacity: 0;
+  text-shadow: 0 1px 8px rgb(18 12 10 / 60%);
+  transition: opacity 300ms ease;
+}
+
+.lp-cine-rail li.is-current::after {
+  border-color: var(--mf-accent);
+  background-color: var(--mf-accent);
+}
+
+.lp-cine-rail li.is-current span {
+  opacity: 1;
+}
+
+@media (max-width: 767.98px) {
+  .lp-stage-copy {
+    align-items: flex-end;
+    padding-block: 84px 32px;
+  }
+
+  /* Phones: the text sits low over a darker foot, the middle of the picture stays open. */
+  .lp-cine-veil--dark {
+    background: linear-gradient(to top, rgb(18 12 10 / 72%) 0, rgb(18 12 10 / 52%) 55%, rgb(18 12 10 / 18%) 100%);
+  }
+
+  .lp-cine-veil--light {
+    background: linear-gradient(to top, rgb(243 236 226 / 80%) 0, rgb(243 236 226 / 58%) 60%, rgb(243 236 226 / 20%) 100%);
+  }
+
+  .lp-stage-text--center {
+    margin-block-end: 150px;
+  }
+
+  .lp-cine-rail {
+    inset-inline-end: 10px;
+    gap: 10px;
+  }
+
+  .lp-cine-rail li span {
+    display: none;
+  }
+}
+
+/* The opening: the same cinematic touch, lighter. The edges darken softly so the light falls on
+ * the two people; behind the headline and the button only a faint shade (the middle of the picture
+ * is empty, the faces and the flash are at its sides and are never covered). */
+.lp-media-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 22% 34% at 50% 46%, rgb(18 12 10 / 34%) 0, transparent 100%),
+    radial-gradient(ellipse at 50% 50%, transparent 62%, rgb(10 6 5 / 46%) 100%);
+  pointer-events: none;
+}
+
+@media (max-width: 767.98px) {
+  .lp-media-art::after {
+    background: radial-gradient(ellipse at 50% 50%, transparent 64%, rgb(10 6 5 / 42%) 100%);
   }
 }
 
